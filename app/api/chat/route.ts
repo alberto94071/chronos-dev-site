@@ -40,6 +40,16 @@ export async function POST(req: NextRequest) {
       };
     });
 
+    // Gemini requires conversation to start with "user" — remove leading model messages
+    while (geminiMessages.length > 0 && geminiMessages[0].role === "model") {
+      geminiMessages.shift();
+    }
+
+    // Need at least one message
+    if (geminiMessages.length === 0) {
+      return NextResponse.json({ text: "¡Hola! ¿En qué puedo ayudarte hoy?" });
+    }
+
     var response = await fetch(
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + apiKey,
       {
