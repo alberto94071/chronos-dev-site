@@ -31,46 +31,29 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid messages" }, { status: 400 });
     }
 
-    const apiKey = process.env.GEMINI_API_KEY || "";
+    const apiKey = process.env.GROQ_API_KEY || "";
 
-    // Convert to Gemini format — assistant → model
-    let geminiMessages = messages.map((m: { role: string; content: string }) => ({
-      role: m.role === "assistant" ? "model" : "user",
-      parts: [{ text: m.content }],
-    }));
-
-    // Fix 1: Remove leading model messages — Gemini requires starting with "user"
-    while (geminiMessages.length > 0 && geminiMessages[0].role === "model") {
-      geminiMessages.shift();
-    }
-
-    // Fix 2: Merge consecutive same-role messages — Gemini requires strict alternation
-    const merged: { role: string; parts: { text: string }[] }[] = [];
-    for (const msg of geminiMessages) {
-      const last = merged[merged.length - 1];
-      if (last && last.role === msg.role) {
-        // Append to previous message instead of adding duplicate role
-        last.parts[0].text += "\n" + msg.parts[0].text;
-      } else {
-        merged.push({ ...msg, parts: [{ text: msg.parts[0].text }] });
-      }
-    }
-    geminiMessages = merged;
-
-    if (geminiMessages.length === 0) {
-      return NextResponse.json({ text: "¡Hola! ¿En qué puedo ayudarte hoy?" });
-    }
+    const groqMessages = [
+      { role: "system", content: SYSTEM_PROMPT },
+      ...messages.map((m: { role: string; content: string }) => ({
+        role: m.role === "assistant" ? "assistant" : "user",
+        content: m.content,
+      })),
+    ];
 
     const response = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=" + apiKey,
+      "https://api.groq.com/openai/v1/chat/completions",
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + apiKey,
+        },
         body: JSON.stringify({
-          // Fix 3: correct property name is systemInstruction (camelCase)
-          systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
-          contents: geminiMessages,
-          generationConfig: { maxOutputTokens: 300, temperature: 0.7 },
+          model: "llama-3.1-8b-instant",
+          messages: groqMessages,
+          max_tokens: 300,
+          temperature: 0.7,
         }),
       }
     );
@@ -86,7 +69,7 @@ export async function POST(req: NextRequest) {
 
     const data = await response.json();
     const text: string =
-      data.candidates?.[0]?.content?.parts?.[0]?.text ||
+      data.choices?.[0]?.message?.content ||
       "Lo siento, hubo un error. Escríbenos directamente a WhatsApp.";
 
     return NextResponse.json({ text });
