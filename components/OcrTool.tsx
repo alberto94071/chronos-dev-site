@@ -40,7 +40,7 @@ export default function OcrTool() {
 
     // Dynamically import pdfjs to avoid SSR issues
     var pdfjsLib = await import("pdfjs-dist");
-    pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "https://unpkg.com/pdfjs-dist@4.4.168/build/pdf.worker.min.mjs";
 
     setProgress(60);
     var pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;

@@ -6,29 +6,21 @@ Tu trabajo es:
 1. Saludar al visitante de forma amigable
 2. Entender qué necesita su negocio
 3. Dar información útil y concisa sobre los servicios de Chronos-Dev
-4. Cuando el visitante muestra interés real, invitarlo a continuar la conversación por WhatsApp para darle un presupuesto personalizado
+4. Cuando el visitante muestra interés real, invitarlo a continuar la conversación por WhatsApp
 
-SERVICIOS QUE OFRECE CHRONOS-DEV:
-- Tienda en línea completa (E-commerce): desde Q6,000 — catálogo, checkout WhatsApp o tarjeta, panel admin
-- Landing page profesional: desde Q2,500 — rápida, responsive, optimizada para conversión
-- Chatbot con IA: desde Q3,000 — asistente 24/7 para tu web o WhatsApp usando Claude API
-- Automatización Python: precio variable — OCR, Google Sheets, flujos de trabajo
-- Mantenimiento mensual: precio variable — soporte, actualizaciones, optimización
+SERVICIOS:
+- Tienda en línea completa (E-commerce): desde Q6,000
+- Landing page profesional: desde Q2,500
+- Chatbot con IA: desde Q3,000
+- Automatización Python: precio variable
+- Mantenimiento mensual: precio variable
 
 REGLAS:
 - Responde SIEMPRE en español
 - Sé directo, amable y profesional
 - Máximo 3-4 oraciones por respuesta
-- Cuando el visitante quiera precio exacto o esté listo para contratar, dile que lo mandarás a WhatsApp
-- NO inventes precios específicos más allá de los rangos dados
-- Si preguntan algo que no es sobre los servicios, redirecciona amablemente
-- Cuando sea momento de pasar a WhatsApp, incluye exactamente este texto al final: [WHATSAPP_CTA]
-
-EJEMPLOS DE CUÁNDO USAR [WHATSAPP_CTA]:
-- Cuando piden presupuesto exacto
-- Cuando dicen "quiero contratar" o "me interesa"
-- Cuando ya explicaste el servicio y el visitante pregunta cómo proceder
-- Después de 4-5 mensajes de conversación productiva`;
+- NO inventes precios más allá de los rangos dados
+- Cuando el visitante quiera precio exacto o contratar, incluye [WHATSAPP_CTA] al final`;
 
 export async function POST(req: NextRequest) {
   try {
@@ -39,35 +31,47 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid messages" }, { status: 400 });
     }
 
-    var response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": process.env.ANTHROPIC_API_KEY || "",
-        "anthropic-version": "2023-06-01",
-      },
-      body: JSON.stringify({
-        model: "claude-haiku-4-5-20251001",
-        max_tokens: 300,
-        system: SYSTEM_PROMPT,
-        messages: messages,
-      }),
+    var apiKey = process.env.GEMINI_API_KEY || "";
+
+    var geminiMessages = messages.map(function (m: { role: string; content: string }) {
+      return {
+        role: m.role === "assistant" ? "model" : "user",
+        parts: [{ text: m.content }],
+      };
     });
+
+    var response = await fetch(
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + apiKey,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
+          contents: geminiMessages,
+          generationConfig: { maxOutputTokens: 300, temperature: 0.7 },
+        }),
+      }
+    );
 
     if (!response.ok) {
       var err = await response.text();
-      console.error("Anthropic error:", err);
-      return NextResponse.json({ error: "API error" }, { status: 500 });
+      console.error("Gemini error:", err);
+      return NextResponse.json(
+        { text: "Hubo un problema. Por favor contáctanos directamente por WhatsApp 👇" },
+        { status: 200 }
+      );
     }
 
     var data = await response.json();
-    var text = data.content?.[0]?.text || "Lo siento, hubo un error. Por favor escríbenos directamente a WhatsApp.";
+    var text: string =
+      data.candidates?.[0]?.content?.parts?.[0]?.text ||
+      "Lo siento, hubo un error. Escríbenos directamente a WhatsApp.";
 
     return NextResponse.json({ text });
   } catch (error) {
     console.error("Chat error:", error);
     return NextResponse.json(
-      { text: "Hubo un problema. Por favor contáctanos directamente por WhatsApp 👇" },
+      { text: "Hubo un problema. Contáctanos directamente por WhatsApp 👇" },
       { status: 200 }
     );
   }
