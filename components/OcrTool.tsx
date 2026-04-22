@@ -1,7 +1,7 @@
 "use client";
 import { useState, useRef } from "react";
 
-const WHATSAPP = "https://wa.me/50255026862?text=Hola%20Chronos-Dev%2C%20me%20interesa%20automatizar%20este%20tipo%20de%20proceso%20en%20mi%20empresa";
+const WHATSAPP = "https://wa.me/50250000000?text=Hola%20Chronos-Dev%2C%20me%20interesa%20automatizar%20este%20tipo%20de%20proceso%20en%20mi%20empresa";
 
 // Public key is OK here - Gemini free tier has daily limits anyway
 const GEMINI_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY || "";
@@ -84,7 +84,7 @@ export default function OcrTool() {
     var base64 = await fileToBase64(file);
 
     var response = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + apiKey,
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + apiKey,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -122,7 +122,7 @@ export default function OcrTool() {
       setProgress("Procesando página " + (i + 1) + " de " + images.length + "...");
 
       var response = await fetch(
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + apiKey,
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + apiKey,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
