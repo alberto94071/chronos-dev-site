@@ -24,41 +24,54 @@ REGLAS:
 
 export async function POST(req: NextRequest) {
   try {
-    var body = await req.json();
-    var { messages } = body;
+    const body = await req.json();
+    const { messages } = body;
 
     if (!messages || !Array.isArray(messages)) {
       return NextResponse.json({ error: "Invalid messages" }, { status: 400 });
     }
 
-    var apiKey = process.env.GEMINI_API_KEY || "";
+    const apiKey = process.env.GEMINI_API_KEY || "";
     console.log("API Key present:", !!apiKey, "Length:", apiKey.length);
 
-    var geminiMessages = messages.map(function (m: { role: string; content: string }) {
-      return {
-        role: m.role === "assistant" ? "model" : "user",
-        parts: [{ text: m.content }],
-      };
-    });
+    // Array para almacenar el historial validado
+    const geminiMessages = [];
+    let lastRole = "";
 
-    // Gemini requires conversation to start with "user" — remove leading model messages
-    while (geminiMessages.length > 0 && geminiMessages[0].role === "model") {
-      geminiMessages.shift();
+    // Iteramos para agrupar roles repetidos y asegurar el orden user -> model
+    for (const m of messages) {
+      const role = m.role === "assistant" ? "model" : "user";
+
+      // Evitar que el historial empiece con 'model'
+      if (geminiMessages.length === 0 && role === "model") continue;
+
+      // Si el rol es igual al anterior, concatenamos el texto al último mensaje
+      if (role === lastRole) {
+        geminiMessages[geminiMessages.length - 1].parts[0].text += `\n\n${m.content}`;
+      } else {
+        // Si el rol es diferente, lo agregamos como un nuevo bloque
+        geminiMessages.push({
+          role: role,
+          parts: [{ text: m.content }],
+        });
+        lastRole = role;
+      }
     }
 
-    // Need at least one message
+    // Necesitamos al menos un mensaje válido
     if (geminiMessages.length === 0) {
       return NextResponse.json({ text: "¡Hola! ¿En qué puedo ayudarte hoy?" });
     }
 
-    console.log("Sending to Gemini, messages count:", geminiMessages.length);
-    var response = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + apiKey,
+    console.log("Sending to Gemini, valid messages count:", geminiMessages.length);
+    
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
+          systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] }, // Corregido a camelCase
           contents: geminiMessages,
           generationConfig: { maxOutputTokens: 300, temperature: 0.7 },
         }),
@@ -66,7 +79,7 @@ export async function POST(req: NextRequest) {
     );
 
     if (!response.ok) {
-      var err = await response.text();
+      const err = await response.text();
       console.error("Gemini error status:", response.status, "body:", err);
       return NextResponse.json(
         { text: "Hubo un problema. Por favor contáctanos directamente por WhatsApp 👇" },
@@ -74,8 +87,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    var data = await response.json();
-    var text: string =
+    const data = await response.json();
+    const text: string =
       data.candidates?.[0]?.content?.parts?.[0]?.text ||
       "Lo siento, hubo un error. Escríbenos directamente a WhatsApp.";
 
