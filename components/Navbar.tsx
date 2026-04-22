@@ -19,6 +19,10 @@ export default function Navbar() {
   function handleScroll(e: React.MouseEvent, href: string) {
     e.preventDefault();
     setOpen(false);
+    if (href.startsWith("/")) {
+      window.location.href = href;
+      return;
+    }
     const el = document.querySelector(href);
     if (el) el.scrollIntoView({ behavior: "smooth" });
   }
