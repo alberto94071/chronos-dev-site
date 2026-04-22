@@ -84,7 +84,7 @@ export default function OcrTool() {
     var base64 = await fileToBase64(file);
 
     var response = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + apiKey,
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent?key=" + apiKey,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -122,7 +122,7 @@ export default function OcrTool() {
       setProgress("Procesando página " + (i + 1) + " de " + images.length + "...");
 
       var response = await fetch(
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + apiKey,
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent?key=" + apiKey,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
