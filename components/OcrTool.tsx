@@ -3,163 +3,98 @@ import { useState, useRef } from "react";
 
 const WHATSAPP = "https://wa.me/50250000000?text=Hola%20Chronos-Dev%2C%20me%20interesa%20automatizar%20este%20tipo%20de%20proceso%20en%20mi%20empresa";
 
-// Public key is OK here - Gemini free tier has daily limits anyway
-const GEMINI_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY || "";
-
 type Status = "idle" | "loading" | "done" | "error";
 
-async function fileToBase64(file: File): Promise<string> {
-  return new Promise(function (resolve, reject) {
-    var reader = new FileReader();
-    reader.onload = function () {
-      var result = reader.result as string;
-      // Remove "data:...;base64," prefix
-      resolve(result.split(",")[1]);
-    };
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
-
-async function pdfToImages(file: File): Promise<string[]> {
-  var arrayBuffer = await file.arrayBuffer();
-  var pdfjsLib = await import("pdfjs-dist");
-  pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
-
-  var pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-  var images: string[] = [];
-
-  // Process up to 10 pages
-  var maxPages = Math.min(pdf.numPages, 10);
-
-  for (var i = 1; i <= maxPages; i++) {
-    var page = await pdf.getPage(i);
-    var viewport = page.getViewport({ scale: 1.5 });
-    var canvas = document.createElement("canvas");
-    canvas.width = viewport.width;
-    canvas.height = viewport.height;
-    var ctx = canvas.getContext("2d")!;
-    await page.render({ canvasContext: ctx, viewport }).promise;
-    var base64 = canvas.toDataURL("image/jpeg", 0.85).split(",")[1];
-    images.push(base64);
-  }
-
-  return images;
-}
-
 export default function OcrTool() {
-  var [status, setStatus] = useState<Status>("idle");
-  var [result, setResult] = useState("");
-  var [fileName, setFileName] = useState("");
-  var [progress, setProgress] = useState("");
-  var inputRef = useRef<HTMLInputElement>(null);
+  const [status, setStatus] = useState<Status>("idle");
+  const [result, setResult] = useState("");
+  const [fileName, setFileName] = useState("");
+  const [progress, setProgress] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
 
   async function handleFile(file: File) {
     setFileName(file.name);
     setStatus("loading");
     setResult("");
+    setProgress("Iniciando...");
 
     try {
-      var isPDF = file.type === "application/pdf";
-      var apiKey = GEMINI_KEY;
-
-      if (!apiKey) {
-        throw new Error("API key not configured");
-      }
-
+      const isPDF = file.type === "application/pdf";
       if (isPDF) {
-        await processPDF(file, apiKey);
+        await extractFromPDF(file);
       } else {
-        await processImage(file, apiKey);
+        await extractFromImage(file);
       }
     } catch (err: any) {
       console.error(err);
       setStatus("error");
-      setResult("Error al procesar el archivo: " + (err.message || "intenta de nuevo."));
+      setResult("Error al procesar: " + (err.message || "intenta de nuevo."));
     }
   }
 
-  async function processImage(file: File, apiKey: string) {
-    setProgress("Analizando imagen con IA...");
-    var base64 = await fileToBase64(file);
+  async function extractFromPDF(file: File) {
+    setProgress("Cargando PDF...");
+    const arrayBuffer = await file.arrayBuffer();
 
-    var response = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent?key=" + apiKey,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{
-            parts: [
-              {
-                text: "Extrae TODO el texto visible en esta imagen de forma exacta. Mantén el orden de lectura natural. Si hay tablas, represéntalas con | separadores. No agregues comentarios propios, solo el texto extraído."
-              },
-              {
-                inline_data: { mime_type: "image/jpeg", data: base64 }
-              }
-            ]
-          }],
-          generationConfig: { maxOutputTokens: 4096, temperature: 0 },
-        }),
-      }
-    );
+    const pdfjsLib = await import("pdfjs-dist");
 
-    if (!response.ok) throw new Error("Gemini error " + response.status);
+    // Use dynamic version to avoid mismatch
+    pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
-    var data = await response.json();
-    var text = data.candidates?.[0]?.content?.parts?.[0]?.text || "No se encontró texto.";
-    setResult(text);
+    setProgress("Leyendo páginas...");
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    let allText = "";
+    const total = pdf.numPages;
+
+    for (let i = 1; i <= total; i++) {
+      setProgress(`Extrayendo página ${i} de ${total}...`);
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      const pageText = content.items
+        .map((item: any) => item.str)
+        .join(" ")
+        .trim();
+      if (pageText) allText += `--- Página ${i} ---\n${pageText}\n\n`;
+    }
+
+    setResult(allText.trim() || "No se encontró texto. El PDF puede ser una imagen escaneada — sube una foto de la página en su lugar.");
     setStatus("done");
   }
 
-  async function processPDF(file: File, apiKey: string) {
-    setProgress("Convirtiendo PDF a imágenes...");
-    var images = await pdfToImages(file);
+  async function extractFromImage(file: File) {
+    setProgress("Cargando Tesseract...");
+    const Tesseract = await import("tesseract.js");
 
-    var allText = "";
-
-    for (var i = 0; i < images.length; i++) {
-      setProgress("Procesando página " + (i + 1) + " de " + images.length + "...");
-
-      var response = await fetch(
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent?key=" + apiKey,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [{
-              parts: [
-                {
-                  text: "Extrae TODO el texto de esta página de forma exacta. Mantén la estructura: párrafos, listas, tablas. No agregues comentarios, solo el texto."
-                },
-                {
-                  inline_data: { mime_type: "image/jpeg", data: images[i] }
-                }
-              ]
-            }],
-            generationConfig: { maxOutputTokens: 4096, temperature: 0 },
-          }),
+    const worker = await Tesseract.createWorker(["spa", "eng"], 1, {
+      logger: (m: any) => {
+        if (m.status === "recognizing text") {
+          const pct = Math.round(m.progress * 100);
+          setProgress(`Reconociendo texto... ${pct}%`);
+        } else if (m.status === "loading tesseract core") {
+          setProgress("Cargando motor OCR...");
+        } else if (m.status === "initializing api") {
+          setProgress("Inicializando...");
         }
-      );
+      },
+    });
 
-      if (!response.ok) continue;
-      var data = await response.json();
-      var pageText = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-      if (pageText) allText += "--- Página " + (i + 1) + " ---\n" + pageText + "\n\n";
-    }
+    const url = URL.createObjectURL(file);
+    const { data: { text } } = await worker.recognize(url);
+    await worker.terminate();
+    URL.revokeObjectURL(url);
 
-    setResult(allText.trim() || "No se encontró texto en el PDF.");
+    setResult(text.trim() || "No se detectó texto en la imagen.");
     setStatus("done");
   }
 
   function handleDrop(e: React.DragEvent) {
     e.preventDefault();
-    var file = e.dataTransfer.files[0];
+    const file = e.dataTransfer.files[0];
     if (file) handleFile(file);
   }
 
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
-    var file = e.target.files?.[0];
+    const file = e.target.files?.[0];
     if (file) handleFile(file);
   }
 
@@ -182,8 +117,8 @@ export default function OcrTool() {
       {status === "idle" && (
         <div
           onDrop={handleDrop}
-          onDragOver={function (e) { e.preventDefault(); }}
-          onClick={function () { inputRef.current?.click(); }}
+          onDragOver={(e) => e.preventDefault()}
+          onClick={() => inputRef.current?.click()}
           style={{
             border: "2px dashed var(--color-border)",
             borderRadius: 8,
@@ -192,11 +127,11 @@ export default function OcrTool() {
             cursor: "pointer",
             transition: "border-color 0.2s, background 0.2s",
           }}
-          onMouseEnter={function (e) {
+          onMouseEnter={(e) => {
             e.currentTarget.style.borderColor = "var(--color-primary)";
             e.currentTarget.style.background = "#7aff0015";
           }}
-          onMouseLeave={function (e) {
+          onMouseLeave={(e) => {
             e.currentTarget.style.borderColor = "var(--color-border)";
             e.currentTarget.style.background = "transparent";
           }}
@@ -206,10 +141,10 @@ export default function OcrTool() {
             Arrastra tu archivo aquí
           </div>
           <div style={{ fontSize: 13, color: "var(--color-muted)", marginBottom: 4 }}>
-            Soporta PDF, PNG, JPG, JPEG, WEBP
+            PDF con texto · PNG · JPG · JPEG · WEBP
           </div>
-          <div style={{ fontSize: 12, color: "var(--color-primary)", marginBottom: 20, fontFamily: "JetBrains Mono, monospace" }}>
-            Sin límite de tamaño · PDFs hasta 10 páginas
+          <div style={{ fontSize: 11, color: "var(--color-primary)", marginBottom: 20, fontFamily: "JetBrains Mono, monospace" }}>
+            Sin límite de tamaño · Sin servidor · 100% privado
           </div>
           <div style={{ display: "inline-flex", background: "var(--color-primary)", color: "var(--color-deep)", padding: "10px 24px", fontSize: 12, fontWeight: 700, letterSpacing: 1 }}>
             Seleccionar archivo →
@@ -229,22 +164,20 @@ export default function OcrTool() {
         <div style={{ textAlign: "center", padding: "60px 40px" }}>
           <div style={{ fontSize: 40, marginBottom: 16 }}>🔍</div>
           <div style={{ fontSize: 15, fontWeight: 700, color: "var(--color-text)", marginBottom: 8 }}>
-            {progress || "Procesando..."}
+            {progress}
           </div>
-          <div style={{ fontSize: 13, color: "var(--color-muted)", marginBottom: 24 }}>
-            <span style={{ color: "var(--color-primary)" }}>{fileName}</span>
+          <div style={{ fontSize: 13, color: "var(--color-primary)", marginBottom: 24, fontFamily: "JetBrains Mono, monospace" }}>
+            {fileName}
           </div>
           <div style={{ display: "flex", justifyContent: "center", gap: 8 }}>
-            {[0, 1, 2].map(function (i) {
-              return (
-                <div key={i} style={{
-                  width: 10, height: 10, borderRadius: "50%",
-                  background: "var(--color-primary)",
-                  animation: "pulse 1.2s ease infinite",
-                  animationDelay: (i * 0.2) + "s",
-                }} />
-              );
-            })}
+            {[0, 1, 2].map((i) => (
+              <div key={i} style={{
+                width: 10, height: 10, borderRadius: "50%",
+                background: "var(--color-primary)",
+                animation: "pulse 1.2s ease infinite",
+                animationDelay: `${i * 0.2}s`,
+              }} />
+            ))}
           </div>
           <style>{`@keyframes pulse{0%,100%{opacity:0.3;transform:scale(1)}50%{opacity:1;transform:scale(1.3)}}`}</style>
         </div>
@@ -258,16 +191,21 @@ export default function OcrTool() {
               ✅ <span style={{ color: "var(--color-primary)" }}>{fileName}</span>
             </div>
             <div style={{ display: "flex", gap: 8 }}>
-              <button onClick={copyText}
-                style={{ background: "var(--color-surface)", color: "var(--color-primary)", border: "1px solid var(--color-primary)", padding: "7px 16px", fontSize: 11, cursor: "pointer", fontWeight: 700 }}>
+              <button
+                onClick={copyText}
+                style={{ background: "var(--color-surface)", color: "var(--color-primary)", border: "1px solid var(--color-primary)", padding: "7px 16px", fontSize: 11, cursor: "pointer", fontWeight: 700 }}
+              >
                 Copiar texto
               </button>
-              <button onClick={reset}
-                style={{ background: "transparent", color: "var(--color-muted)", border: "1px solid var(--color-border)", padding: "7px 16px", fontSize: 11, cursor: "pointer" }}>
+              <button
+                onClick={reset}
+                style={{ background: "transparent", color: "var(--color-muted)", border: "1px solid var(--color-border)", padding: "7px 16px", fontSize: 11, cursor: "pointer" }}
+              >
                 Nuevo archivo
               </button>
             </div>
           </div>
+
           <textarea
             readOnly
             value={result}
@@ -283,6 +221,7 @@ export default function OcrTool() {
               outline: "none",
             }}
           />
+
           <div style={{ marginTop: 20, background: "var(--color-surface)", border: "1px solid var(--color-border)", borderRadius: 4, padding: "20px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
             <div>
               <div style={{ fontSize: 14, fontWeight: 700, color: "var(--color-text)", marginBottom: 4 }}>
@@ -292,8 +231,12 @@ export default function OcrTool() {
                 Chronos-Dev crea sistemas que procesan documentos automáticamente con IA.
               </div>
             </div>
-            <a href={WHATSAPP} target="_blank" rel="noopener noreferrer"
-              style={{ background: "var(--color-primary)", color: "var(--color-deep)", padding: "11px 22px", fontSize: 12, fontWeight: 700, textDecoration: "none", whiteSpace: "nowrap" }}>
+            <a
+              href={WHATSAPP}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ background: "var(--color-primary)", color: "var(--color-deep)", padding: "11px 22px", fontSize: 12, fontWeight: 700, textDecoration: "none", whiteSpace: "nowrap" }}
+            >
               Automatizar mi empresa →
             </a>
           </div>
@@ -304,7 +247,10 @@ export default function OcrTool() {
       {status === "error" && (
         <div style={{ textAlign: "center", padding: 40 }}>
           <div style={{ fontSize: 14, color: "#ff6b6b", marginBottom: 16 }}>{result}</div>
-          <button onClick={reset} style={{ background: "var(--color-primary)", color: "var(--color-deep)", border: "none", padding: "10px 24px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+          <button
+            onClick={reset}
+            style={{ background: "var(--color-primary)", color: "var(--color-deep)", border: "none", padding: "10px 24px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}
+          >
             Intentar de nuevo
           </button>
         </div>
