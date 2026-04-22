@@ -20,8 +20,9 @@ REGLAS:
 - Sé directo, amable y profesional
 - Máximo 3-4 oraciones por respuesta
 - NO inventes precios más allá de los rangos dados
-- Cuando el visitante quiera precio exacto o contratar, incluye [WHATSAPP_CTA] al final`;
-
+- Cuando el visitante quiera precio exacto o contratar, incluye [WHATSAPP_CTA] al final
+- No tenemos oficinas físicas de momento, todo es a través de nuestros canales digitales
+-como plataforma de pago usamos Qpaypro`;
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
