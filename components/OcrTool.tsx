@@ -18,7 +18,21 @@ export default function OcrTool() {
 
     try {
       var formData = new FormData();
-      formData.append("file", file);
+      var isPDF = file.type === "application/pdf";
+
+      if (isPDF) {
+        // PDFs: send directly but warn if too large
+        if (file.size > 4 * 1024 * 1024) {
+          setStatus("error");
+          setResult("El PDF es muy grande (máx 4MB). Intenta con un PDF más pequeño o una imagen del documento.");
+          return;
+        }
+        formData.append("file", file);
+      } else {
+        // Images: compress with Canvas before sending
+        var compressed = await compressImage(file);
+        formData.append("file", compressed);
+      }
 
       var res = await fetch("/api/ocr", {
         method: "POST",
@@ -26,7 +40,7 @@ export default function OcrTool() {
       });
 
       if (!res.ok) {
-        throw new Error("Server error");
+        throw new Error("Server error " + res.status);
       }
 
       var data = await res.json();
@@ -39,6 +53,37 @@ export default function OcrTool() {
       setStatus("error");
       setResult("Error al procesar el archivo. Verifica que sea un PDF o imagen válida.");
     }
+  }
+
+  async function compressImage(file: File): Promise<File> {
+    return new Promise(function (resolve) {
+      var img = new Image();
+      var url = URL.createObjectURL(file);
+      img.onload = function () {
+        var canvas = document.createElement("canvas");
+        var MAX = 1600;
+        var w = img.width;
+        var h = img.height;
+        if (w > MAX || h > MAX) {
+          if (w > h) { h = Math.round((h * MAX) / w); w = MAX; }
+          else { w = Math.round((w * MAX) / h); h = MAX; }
+        }
+        canvas.width = w;
+        canvas.height = h;
+        var ctx = canvas.getContext("2d");
+        ctx?.drawImage(img, 0, 0, w, h);
+        URL.revokeObjectURL(url);
+        canvas.toBlob(function (blob) {
+          if (blob) {
+            resolve(new File([blob], file.name.replace(/\.[^.]+$/, ".jpg"), { type: "image/jpeg" }));
+          } else {
+            resolve(file);
+          }
+        }, "image/jpeg", 0.85);
+      };
+      img.onerror = function () { resolve(file); };
+      img.src = url;
+    });
   }
 
   function handleDrop(e: React.DragEvent) {
