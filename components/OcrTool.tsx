@@ -1,7 +1,7 @@
 "use client";
 import { useState, useRef } from "react";
 
-const WHATSAPP = "https://wa.me/50250000000?text=Hola%20Chronos-Dev%2C%20me%20interesa%20automatizar%20este%20tipo%20de%20proceso%20en%20mi%20empresa";
+const WHATSAPP = "https://wa.me/50255026862?text=Hola%20Chronos-Dev%2C%20me%20interesa%20automatizar%20este%20tipo%20de%20proceso%20en%20mi%20empresa";
 
 type Status = "idle" | "loading" | "done" | "error";
 
@@ -40,7 +40,7 @@ export default function OcrTool() {
 
     // Dynamically import pdfjs to avoid SSR issues
     var pdfjsLib = await import("pdfjs-dist");
-    pdfjsLib.GlobalWorkerOptions.workerSrc = "https://unpkg.com/pdfjs-dist@4.4.168/build/pdf.worker.min.mjs";
+    pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
     setProgress(60);
     var pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
