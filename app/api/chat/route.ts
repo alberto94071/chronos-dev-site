@@ -32,46 +32,43 @@ export async function POST(req: NextRequest) {
     }
 
     const apiKey = process.env.GEMINI_API_KEY || "";
-    console.log("API Key present:", !!apiKey, "Length:", apiKey.length);
 
-    // Array para almacenar el historial validado
-    const geminiMessages = [];
-    let lastRole = "";
+    // Convert to Gemini format — assistant → model
+    let geminiMessages = messages.map((m: { role: string; content: string }) => ({
+      role: m.role === "assistant" ? "model" : "user",
+      parts: [{ text: m.content }],
+    }));
 
-    // Iteramos para agrupar roles repetidos y asegurar el orden user -> model
-    for (const m of messages) {
-      const role = m.role === "assistant" ? "model" : "user";
-
-      // Evitar que el historial empiece con 'model'
-      if (geminiMessages.length === 0 && role === "model") continue;
-
-      // Si el rol es igual al anterior, concatenamos el texto al último mensaje
-      if (role === lastRole) {
-        geminiMessages[geminiMessages.length - 1].parts[0].text += `\n\n${m.content}`;
-      } else {
-        // Si el rol es diferente, lo agregamos como un nuevo bloque
-        geminiMessages.push({
-          role: role,
-          parts: [{ text: m.content }],
-        });
-        lastRole = role;
-      }
+    // Fix 1: Remove leading model messages — Gemini requires starting with "user"
+    while (geminiMessages.length > 0 && geminiMessages[0].role === "model") {
+      geminiMessages.shift();
     }
 
-    // Necesitamos al menos un mensaje válido
+    // Fix 2: Merge consecutive same-role messages — Gemini requires strict alternation
+    const merged: { role: string; parts: { text: string }[] }[] = [];
+    for (const msg of geminiMessages) {
+      const last = merged[merged.length - 1];
+      if (last && last.role === msg.role) {
+        // Append to previous message instead of adding duplicate role
+        last.parts[0].text += "\n" + msg.parts[0].text;
+      } else {
+        merged.push({ ...msg, parts: [{ text: msg.parts[0].text }] });
+      }
+    }
+    geminiMessages = merged;
+
     if (geminiMessages.length === 0) {
       return NextResponse.json({ text: "¡Hola! ¿En qué puedo ayudarte hoy?" });
     }
 
-    console.log("Sending to Gemini, valid messages count:", geminiMessages.length);
-    
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + apiKey,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] }, // Corregido a camelCase
+          // Fix 3: correct property name is systemInstruction (camelCase)
+          systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
           contents: geminiMessages,
           generationConfig: { maxOutputTokens: 300, temperature: 0.7 },
         }),
