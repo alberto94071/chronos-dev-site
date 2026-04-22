@@ -3,12 +3,55 @@ import { useState, useRef } from "react";
 
 const WHATSAPP = "https://wa.me/50250000000?text=Hola%20Chronos-Dev%2C%20me%20interesa%20automatizar%20este%20tipo%20de%20proceso%20en%20mi%20empresa";
 
+// Public key is OK here - Gemini free tier has daily limits anyway
+const GEMINI_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY || "";
+
 type Status = "idle" | "loading" | "done" | "error";
+
+async function fileToBase64(file: File): Promise<string> {
+  return new Promise(function (resolve, reject) {
+    var reader = new FileReader();
+    reader.onload = function () {
+      var result = reader.result as string;
+      // Remove "data:...;base64," prefix
+      resolve(result.split(",")[1]);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function pdfToImages(file: File): Promise<string[]> {
+  var arrayBuffer = await file.arrayBuffer();
+  var pdfjsLib = await import("pdfjs-dist");
+  pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+
+  var pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  var images: string[] = [];
+
+  // Process up to 10 pages
+  var maxPages = Math.min(pdf.numPages, 10);
+
+  for (var i = 1; i <= maxPages; i++) {
+    var page = await pdf.getPage(i);
+    var viewport = page.getViewport({ scale: 1.5 });
+    var canvas = document.createElement("canvas");
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+    var ctx = canvas.getContext("2d")!;
+    await page.render({ canvasContext: ctx, viewport }).promise;
+    var base64 = canvas.toDataURL("image/jpeg", 0.85).split(",")[1];
+    images.push(base64);
+  }
+
+  return images;
+}
 
 export default function OcrTool() {
   var [status, setStatus] = useState<Status>("idle");
   var [result, setResult] = useState("");
   var [fileName, setFileName] = useState("");
+  var [progress, setProgress] = useState("");
   var inputRef = useRef<HTMLInputElement>(null);
 
   async function handleFile(file: File) {
@@ -17,73 +60,96 @@ export default function OcrTool() {
     setResult("");
 
     try {
-      var formData = new FormData();
       var isPDF = file.type === "application/pdf";
+      var apiKey = GEMINI_KEY;
+
+      if (!apiKey) {
+        throw new Error("API key not configured");
+      }
 
       if (isPDF) {
-        // PDFs: send directly but warn if too large
-        if (file.size > 4 * 1024 * 1024) {
-          setStatus("error");
-          setResult("El PDF es muy grande (máx 4MB). Intenta con un PDF más pequeño o una imagen del documento.");
-          return;
-        }
-        formData.append("file", file);
+        await processPDF(file, apiKey);
       } else {
-        // Images: compress with Canvas before sending
-        var compressed = await compressImage(file);
-        formData.append("file", compressed);
+        await processImage(file, apiKey);
       }
-
-      var res = await fetch("/api/ocr", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!res.ok) {
-        throw new Error("Server error " + res.status);
-      }
-
-      var data = await res.json();
-      if (data.error) throw new Error(data.error);
-
-      setResult(data.text || "No se encontró texto en el archivo.");
-      setStatus("done");
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
       setStatus("error");
-      setResult("Error al procesar el archivo. Verifica que sea un PDF o imagen válida.");
+      setResult("Error al procesar el archivo: " + (err.message || "intenta de nuevo."));
     }
   }
 
-  async function compressImage(file: File): Promise<File> {
-    return new Promise(function (resolve) {
-      var img = new Image();
-      var url = URL.createObjectURL(file);
-      img.onload = function () {
-        var canvas = document.createElement("canvas");
-        var MAX = 1600;
-        var w = img.width;
-        var h = img.height;
-        if (w > MAX || h > MAX) {
-          if (w > h) { h = Math.round((h * MAX) / w); w = MAX; }
-          else { w = Math.round((w * MAX) / h); h = MAX; }
+  async function processImage(file: File, apiKey: string) {
+    setProgress("Analizando imagen con IA...");
+    var base64 = await fileToBase64(file);
+
+    var response = await fetch(
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + apiKey,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{
+            parts: [
+              {
+                text: "Extrae TODO el texto visible en esta imagen de forma exacta. Mantén el orden de lectura natural. Si hay tablas, represéntalas con | separadores. No agregues comentarios propios, solo el texto extraído."
+              },
+              {
+                inline_data: { mime_type: "image/jpeg", data: base64 }
+              }
+            ]
+          }],
+          generationConfig: { maxOutputTokens: 4096, temperature: 0 },
+        }),
+      }
+    );
+
+    if (!response.ok) throw new Error("Gemini error " + response.status);
+
+    var data = await response.json();
+    var text = data.candidates?.[0]?.content?.parts?.[0]?.text || "No se encontró texto.";
+    setResult(text);
+    setStatus("done");
+  }
+
+  async function processPDF(file: File, apiKey: string) {
+    setProgress("Convirtiendo PDF a imágenes...");
+    var images = await pdfToImages(file);
+
+    var allText = "";
+
+    for (var i = 0; i < images.length; i++) {
+      setProgress("Procesando página " + (i + 1) + " de " + images.length + "...");
+
+      var response = await fetch(
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + apiKey,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{
+              parts: [
+                {
+                  text: "Extrae TODO el texto de esta página de forma exacta. Mantén la estructura: párrafos, listas, tablas. No agregues comentarios, solo el texto."
+                },
+                {
+                  inline_data: { mime_type: "image/jpeg", data: images[i] }
+                }
+              ]
+            }],
+            generationConfig: { maxOutputTokens: 4096, temperature: 0 },
+          }),
         }
-        canvas.width = w;
-        canvas.height = h;
-        var ctx = canvas.getContext("2d");
-        ctx?.drawImage(img, 0, 0, w, h);
-        URL.revokeObjectURL(url);
-        canvas.toBlob(function (blob) {
-          if (blob) {
-            resolve(new File([blob], file.name.replace(/\.[^.]+$/, ".jpg"), { type: "image/jpeg" }));
-          } else {
-            resolve(file);
-          }
-        }, "image/jpeg", 0.85);
-      };
-      img.onerror = function () { resolve(file); };
-      img.src = url;
-    });
+      );
+
+      if (!response.ok) continue;
+      var data = await response.json();
+      var pageText = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+      if (pageText) allText += "--- Página " + (i + 1) + " ---\n" + pageText + "\n\n";
+    }
+
+    setResult(allText.trim() || "No se encontró texto en el PDF.");
+    setStatus("done");
   }
 
   function handleDrop(e: React.DragEvent) {
@@ -105,6 +171,7 @@ export default function OcrTool() {
     setStatus("idle");
     setResult("");
     setFileName("");
+    setProgress("");
     if (inputRef.current) inputRef.current.value = "";
   }
 
@@ -138,8 +205,11 @@ export default function OcrTool() {
           <div style={{ fontSize: 18, fontWeight: 700, color: "var(--color-text)", marginBottom: 8 }}>
             Arrastra tu archivo aquí
           </div>
-          <div style={{ fontSize: 13, color: "var(--color-muted)", marginBottom: 20 }}>
-            Soporta PDF, PNG, JPG, JPEG, WEBP — hasta 20MB
+          <div style={{ fontSize: 13, color: "var(--color-muted)", marginBottom: 4 }}>
+            Soporta PDF, PNG, JPG, JPEG, WEBP
+          </div>
+          <div style={{ fontSize: 12, color: "var(--color-primary)", marginBottom: 20, fontFamily: "JetBrains Mono, monospace" }}>
+            Sin límite de tamaño · PDFs hasta 10 páginas
           </div>
           <div style={{ display: "inline-flex", background: "var(--color-primary)", color: "var(--color-deep)", padding: "10px 24px", fontSize: 12, fontWeight: 700, letterSpacing: 1 }}>
             Seleccionar archivo →
@@ -159,12 +229,11 @@ export default function OcrTool() {
         <div style={{ textAlign: "center", padding: "60px 40px" }}>
           <div style={{ fontSize: 40, marginBottom: 16 }}>🔍</div>
           <div style={{ fontSize: 15, fontWeight: 700, color: "var(--color-text)", marginBottom: 8 }}>
-            Analizando documento con IA...
+            {progress || "Procesando..."}
           </div>
           <div style={{ fontSize: 13, color: "var(--color-muted)", marginBottom: 24 }}>
             <span style={{ color: "var(--color-primary)" }}>{fileName}</span>
           </div>
-          {/* Animated dots */}
           <div style={{ display: "flex", justifyContent: "center", gap: 8 }}>
             {[0, 1, 2].map(function (i) {
               return (
@@ -173,12 +242,11 @@ export default function OcrTool() {
                   background: "var(--color-primary)",
                   animation: "pulse 1.2s ease infinite",
                   animationDelay: (i * 0.2) + "s",
-                  opacity: 0.4,
                 }} />
               );
             })}
           </div>
-          <style>{`@keyframes pulse { 0%,100%{opacity:0.3;transform:scale(1)} 50%{opacity:1;transform:scale(1.3)} }`}</style>
+          <style>{`@keyframes pulse{0%,100%{opacity:0.3;transform:scale(1)}50%{opacity:1;transform:scale(1.3)}}`}</style>
         </div>
       )}
 
@@ -200,7 +268,6 @@ export default function OcrTool() {
               </button>
             </div>
           </div>
-
           <textarea
             readOnly
             value={result}
@@ -216,7 +283,6 @@ export default function OcrTool() {
               outline: "none",
             }}
           />
-
           <div style={{ marginTop: 20, background: "var(--color-surface)", border: "1px solid var(--color-border)", borderRadius: 4, padding: "20px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
             <div>
               <div style={{ fontSize: 14, fontWeight: 700, color: "var(--color-text)", marginBottom: 4 }}>
