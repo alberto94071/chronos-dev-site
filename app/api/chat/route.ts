@@ -32,6 +32,7 @@ export async function POST(req: NextRequest) {
     }
 
     var apiKey = process.env.GEMINI_API_KEY || "";
+    console.log("API Key present:", !!apiKey, "Length:", apiKey.length);
 
     var geminiMessages = messages.map(function (m: { role: string; content: string }) {
       return {
@@ -50,6 +51,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ text: "¡Hola! ¿En qué puedo ayudarte hoy?" });
     }
 
+    console.log("Sending to Gemini, messages count:", geminiMessages.length);
     var response = await fetch(
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + apiKey,
       {
@@ -65,7 +67,7 @@ export async function POST(req: NextRequest) {
 
     if (!response.ok) {
       var err = await response.text();
-      console.error("Gemini error:", err);
+      console.error("Gemini error status:", response.status, "body:", err);
       return NextResponse.json(
         { text: "Hubo un problema. Por favor contáctanos directamente por WhatsApp 👇" },
         { status: 200 }
