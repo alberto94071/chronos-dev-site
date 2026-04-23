@@ -67,10 +67,12 @@ export default function Navbar() {
     <>
       <nav
         style={{
-          background: scrolled ? "var(--color-deep)" : "var(--color-deep)",
+          background: "var(--color-deep)",
           borderBottom: "1px solid var(--color-border)",
-          position: "sticky",
+          position: "fixed",
           top: 0,
+          left: 0,
+          right: 0,
           zIndex: 100,
           height: 60,
           display: "flex",
@@ -193,30 +195,56 @@ export default function Navbar() {
           className="nav-burger"
         >
           <div style={{ flex: 1, padding: "8px 0" }}>
-            {mobileLinks.map((l, i) => (
-              <a
-                key={l.href}
-                href={l.href}
-                onClick={(e) => handleNav(e, l.href)}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  padding: "18px 24px",
-                  fontSize: 15,
-                  fontWeight: l.href === "/contact" ? 700 : 400,
-                  color: l.href === "/contact" ? "var(--color-primary)" : "var(--color-text)",
-                  textDecoration: "none",
-                  borderBottom: "1px solid var(--color-border)",
-                  letterSpacing: 0.5,
-                }}
-              >
-                {l.label}
-                <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" style={{ opacity: 0.5 }}>
-                  <path fillRule="evenodd" d="M4.646 1.646a.5.5 0 01.708 0l6 6a.5.5 0 010 .708l-6 6a.5.5 0 01-.708-.708L10.293 8 4.646 2.354a.5.5 0 010-.708z" />
-                </svg>
-              </a>
-            ))}
+            {mobileLinks.map((l) => {
+              const isPage = l.href === "/tools" || l.href === "/contact";
+              return isPage ? (
+                <a
+                  key={l.href}
+                  href={l.href}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    padding: "18px 24px",
+                    fontSize: 15,
+                    fontWeight: l.href === "/contact" ? 700 : 400,
+                    color: l.href === "/contact" ? "var(--color-primary)" : "var(--color-text)",
+                    textDecoration: "none",
+                    borderBottom: "1px solid var(--color-border)",
+                    letterSpacing: 0.5,
+                  }}
+                  onClick={() => setOpen(false)}
+                >
+                  {l.label}
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" style={{ opacity: 0.5 }}>
+                    <path fillRule="evenodd" d="M4.646 1.646a.5.5 0 01.708 0l6 6a.5.5 0 010 .708l-6 6a.5.5 0 01-.708-.708L10.293 8 4.646 2.354a.5.5 0 010-.708z" />
+                  </svg>
+                </a>
+              ) : (
+                <a
+                  key={l.href}
+                  href={l.href}
+                  onClick={(e) => handleNav(e, l.href)}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    padding: "18px 24px",
+                    fontSize: 15,
+                    fontWeight: 400,
+                    color: "var(--color-text)",
+                    textDecoration: "none",
+                    borderBottom: "1px solid var(--color-border)",
+                    letterSpacing: 0.5,
+                  }}
+                >
+                  {l.label}
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" style={{ opacity: 0.5 }}>
+                    <path fillRule="evenodd" d="M4.646 1.646a.5.5 0 01.708 0l6 6a.5.5 0 010 .708l-6 6a.5.5 0 01-.708-.708L10.293 8 4.646 2.354a.5.5 0 010-.708z" />
+                  </svg>
+                </a>
+              );
+            })}
           </div>
 
           {/* MOBILE CTA */}
@@ -242,6 +270,9 @@ export default function Navbar() {
           </div>
         </div>
       )}
+
+      {/* SPACER — compensates fixed navbar height */}
+      <div style={{ height: 60 }} />
 
       <style>{`
         .nav-desktop { display: flex !important; }
