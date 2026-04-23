@@ -36,7 +36,7 @@ var projects: Project[] = [
     desc: "Catálogo de textiles tradicionales guatemaltecos con diseño inspirado en la cultura local y colores Mayas.",
     bg: "#061008", accentColor: "#4aaa5a",
     tech: ["Next.js 15", "Neon DB", "PWA", "WhatsApp"],
-    url: "https://textilestuanis.vercel.app",
+    url: "https://textiles-tuanis.vercel.app",
     icon: (
       <svg width="64" height="64" viewBox="0 0 70 70" fill="none">
         <rect x="12" y="12" width="46" height="46" rx="3" fill="#1a4a2415" stroke="#4aaa5a" strokeWidth="1.2" />
@@ -54,7 +54,7 @@ var projects: Project[] = [
     desc: "E-commerce de perfumería de lujo con precios duales GTQ/USD, geolocalización automática y mercado GT + EE.UU.",
     bg: "#05020c", accentColor: "#aa77ee",
     tech: ["Next.js 15", "Dual Market", "Geolocation", "Neon DB"],
-    url: "https://rfragancias.store",
+    url: "https://r-fragancias.vercel.app",
     icon: (
       <svg width="64" height="64" viewBox="0 0 70 70" fill="none">
         <rect x="28" y="28" width="14" height="28" rx="3" fill="#7030aa15" stroke="#aa77ee" strokeWidth="1.2" />
@@ -87,7 +87,7 @@ var projects: Project[] = [
     desc: "Asistente virtual inteligente entrenado con información del negocio, disponible 24/7 en web o WhatsApp.",
     bg: "#05060e", accentColor: "#3a7aaa",
     tech: ["Claude API", "Next.js", "WhatsApp", "24/7"],
-    url: "#contact",
+    url: "/contact",
     icon: (
       <svg width="64" height="64" viewBox="0 0 70 70" fill="none">
         <rect x="8" y="16" width="32" height="22" rx="4" fill="#1a3a5a15" stroke="#3a7aaa" strokeWidth="1.2" />
@@ -235,8 +235,8 @@ export default function Projects() {
                     </div>
                     <h3 style={{ fontSize: 22, fontWeight: 700, color: "var(--color-text)", marginBottom: 10 }}>{p.name}</h3>
                     <p style={{ fontSize: 14, color: "var(--color-muted)", lineHeight: 1.7, marginBottom: 20 }}>{p.desc}</p>
-                    <a href={p.url} target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "var(--color-primary)", color: "var(--color-deep)", padding: "10px 22px", fontSize: 12, fontWeight: 700, textDecoration: "none" }}>
-                      Ver en vivo →
+                    <a href={p.url} target={p.url.startsWith("http") ? "_blank" : "_self"} rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "var(--color-primary)", color: "var(--color-deep)", padding: "10px 22px", fontSize: 12, fontWeight: 700, textDecoration: "none" }}>
+                      {p.url.startsWith("http") ? "Ver en vivo →" : "Ir a contacto →"}
                     </a>
                   </div>
                 );
