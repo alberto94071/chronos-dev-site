@@ -41,10 +41,16 @@ export default function Navbar() {
   function handleNav(e: React.MouseEvent, href: string) {
     e.preventDefault();
     setOpen(false);
-    if (href.startsWith("/") && !href.includes("#")) {
+    // Pure page routes — navigate directly
+    if (href === "/tools" || href === "/contact") {
       window.location.href = href;
       return;
     }
+    if (href === "/") {
+      window.location.href = "/";
+      return;
+    }
+    // Hash links
     if (href.includes("#")) {
       const hash = href.split("#")[1];
       const isHome = pathname === "/";

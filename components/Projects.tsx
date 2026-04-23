@@ -150,7 +150,7 @@ export default function Projects() {
         border: "1px solid var(--color-border)",
         borderRadius: 4,
         overflow: "hidden",
-      }}>
+      }} className="projects-grid-main">
         {projects.map(function (p, i) {
           return (
             <div
@@ -159,7 +159,7 @@ export default function Projects() {
               style={{
                 cursor: "pointer",
                 borderRight: i % 3 !== 2 ? "1px solid var(--color-border)" : undefined,
-                borderBottom: i < 3 ? "1px solid var(--color-border)" : undefined,
+                borderBottom: i < projects.length - (projects.length % 3 || 3) ? "1px solid var(--color-border)" : undefined,
                 transition: "background 0.2s",
               }}
               onMouseEnter={function (e) { e.currentTarget.style.background = "var(--color-surface)"; }}
@@ -203,6 +203,17 @@ export default function Projects() {
           <span style={{ fontSize: 9, color: "var(--color-deep)", fontWeight: 700, textAlign: "center", lineHeight: 1.3 }}>Ver más<br />proyectos</span>
         </button>
       </div>
+
+      <style>{`
+        @media (max-width: 768px) {
+          .projects-grid-main { grid-template-columns: 1fr !important; }
+          .projects-grid-main > div { border-right: none !important; border-bottom: 1px solid var(--color-border) !important; }
+        }
+        @media (min-width: 481px) and (max-width: 768px) {
+          .projects-grid-main { grid-template-columns: 1fr 1fr !important; }
+          .projects-grid-main > div:nth-child(odd) { border-right: 1px solid var(--color-border) !important; }
+        }
+      `}</style>
 
       {/* DEMO OVERLAY */}
       {demo && (
