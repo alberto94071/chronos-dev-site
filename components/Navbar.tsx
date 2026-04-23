@@ -42,7 +42,7 @@ export default function Navbar() {
     e.preventDefault();
     setOpen(false);
     // Pure page routes — navigate directly
-    if (href === "/tools" || href === "/contact") {
+    if (href === "/tools" || href === "/tools") {
       window.location.href = href;
       return;
     }
