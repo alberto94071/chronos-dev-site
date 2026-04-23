@@ -20,7 +20,7 @@ export default function UnlockPage() {
     try {
       var { PDFDocument } = await import("pdf-lib");
       var buf = await file.arrayBuffer();
-      var doc = await PDFDocument.load(buf, { password: password });
+      var doc = await PDFDocument.load(buf, { password: password } as any);
       // Save without password
       var bytes = await doc.save();
       var blob = new Blob([bytes as BlobPart], { type: "application/pdf" });
