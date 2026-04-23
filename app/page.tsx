@@ -8,30 +8,33 @@ import Projects from "@/components/Projects";
 import Services from "@/components/Services";
 import Testimonial from "@/components/Testimonial";
 import Footer from "@/components/Footer";
-
-const WHATSAPP = "https://wa.me/50250000000?text=Hola%20Chronos-Dev%2C%20me%20interesa%20un%20proyecto";
+import Link from "next/link";
 
 export default function Home() {
   const [progress, setProgress] = useState(0);
+  const [showTooltip, setShowTooltip] = useState(false);
 
   useEffect(function () {
     function handleScroll() {
-      var el = document.documentElement;
-      var scrolled = el.scrollTop;
-      var total = el.scrollHeight - el.clientHeight;
+      const el = document.documentElement;
+      const scrolled = el.scrollTop;
+      const total = el.scrollHeight - el.clientHeight;
       setProgress(total > 0 ? (scrolled / total) * 100 : 0);
     }
     window.addEventListener("scroll", handleScroll, { passive: true });
     return function () { window.removeEventListener("scroll", handleScroll); };
   }, []);
 
+  // Show tooltip after 5 seconds
+  useEffect(function () {
+    const timer = setTimeout(function () { setShowTooltip(true); }, 5000);
+    return function () { clearTimeout(timer); };
+  }, []);
+
   return (
     <main>
       {/* SCROLL PROGRESS */}
-      <div
-        className="scroll-progress"
-        style={{ width: progress + "%" }}
-      />
+      <div className="scroll-progress" style={{ width: progress + "%" }} />
 
       <Navbar />
       <Hero />
@@ -42,19 +45,101 @@ export default function Home() {
       <Testimonial />
       <Footer />
 
-      {/* WHATSAPP FLOAT */}
-      <a
-        href={WHATSAPP}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="wa-float"
-        aria-label="Chat en WhatsApp"
-      >
-        <span className="wa-tooltip">Escríbenos 👋</span>
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="white">
-          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+      {/* CHATBOT FLOATING BUTTON */}
+      <Link href="/contact" className="chat-float" aria-label="Habla con nuestro asistente IA">
+        {/* TOOLTIP */}
+        <div className="chat-tooltip" style={{ opacity: showTooltip ? 1 : 0 }}>
+          <span>¿Tienes preguntas?</span>
+          <strong>Prueba nuestro bot IA</strong>
+          <button
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowTooltip(false); }}
+            style={{ position: "absolute", top: 4, right: 6, background: "none", border: "none", color: "var(--color-muted)", fontSize: 12, cursor: "pointer", lineHeight: 1 }}
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* ICON */}
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--color-deep)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" fill="var(--color-deep)" stroke="var(--color-deep)" />
+          <circle cx="8" cy="10" r="1.2" fill="var(--color-primary)" />
+          <circle cx="12" cy="10" r="1.2" fill="var(--color-primary)" />
+          <circle cx="16" cy="10" r="1.2" fill="var(--color-primary)" />
         </svg>
-      </a>
+      </Link>
+
+      <style>{`
+        .chat-float {
+          position: fixed;
+          bottom: 28px;
+          right: 28px;
+          width: 58px;
+          height: 58px;
+          border-radius: 50%;
+          background: var(--color-primary);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 4px 24px #7aff0044;
+          cursor: pointer;
+          z-index: 999;
+          text-decoration: none;
+          transition: transform 0.2s, box-shadow 0.2s;
+          animation: chatPulse 3s infinite;
+        }
+        .chat-float:hover {
+          transform: scale(1.1);
+          box-shadow: 0 6px 32px #7aff0066;
+        }
+        @keyframes chatPulse {
+          0%, 100% { box-shadow: 0 4px 24px #7aff0044; }
+          50% { box-shadow: 0 4px 32px #7aff0088, 0 0 0 10px #7aff0015; }
+        }
+
+        .chat-tooltip {
+          position: absolute;
+          right: 68px;
+          bottom: 4px;
+          background: var(--color-surface);
+          border: 1px solid var(--color-border);
+          color: var(--color-text);
+          padding: 10px 32px 10px 14px;
+          white-space: nowrap;
+          border-radius: 8px;
+          transition: opacity 0.3s;
+          pointer-events: auto;
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+          box-shadow: 0 4px 20px #00000044;
+        }
+        .chat-tooltip span {
+          font-size: 11px;
+          color: var(--color-muted);
+        }
+        .chat-tooltip strong {
+          font-size: 13px;
+          color: var(--color-primary);
+          font-weight: 700;
+        }
+        .chat-tooltip::after {
+          content: '';
+          position: absolute;
+          right: -6px;
+          bottom: 18px;
+          width: 12px;
+          height: 12px;
+          background: var(--color-surface);
+          border-right: 1px solid var(--color-border);
+          border-bottom: 1px solid var(--color-border);
+          transform: rotate(-45deg);
+        }
+
+        @media (max-width: 768px) {
+          .chat-float { bottom: 20px; right: 16px; width: 52px; height: 52px; }
+          .chat-tooltip { right: 60px; bottom: 0; }
+        }
+      `}</style>
     </main>
   );
 }
