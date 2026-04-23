@@ -49,7 +49,7 @@ export default function SplitPage() {
       var pages = await out.copyPages(src, indices.map(function(n) { return n - 1; }));
       for (var i = 0; i < pages.length; i++) out.addPage(pages[i]);
       var bytes = await out.save();
-      var blob = new Blob([bytes], { type: "application/pdf" });
+      var blob = new Blob([bytes as BlobPart], { type: "application/pdf" });
       setResultUrl(URL.createObjectURL(blob));
       setStatus("done");
     } catch (e) {

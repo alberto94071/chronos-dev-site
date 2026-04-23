@@ -22,7 +22,7 @@ export default function ProtectPage() {
       var buf = await file.arrayBuffer();
       var doc = await PDFDocument.load(buf);
       var bytes = await doc.save({ userPassword: password, ownerPassword: password });
-      var blob = new Blob([bytes], { type: "application/pdf" });
+      var blob = new Blob([bytes as BlobPart], { type: "application/pdf" });
       setResultUrl(URL.createObjectURL(blob));
       setStatus("done");
     } catch (e: any) {

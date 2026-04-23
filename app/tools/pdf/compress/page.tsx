@@ -33,7 +33,7 @@ export default function CompressPage() {
 
       // Re-save the PDF - pdf-lib removes unused objects and optimizes structure
       var bytes = await doc.save();
-      var blob = new Blob([bytes], { type: "application/pdf" });
+      var blob = new Blob([bytes as BlobPart], { type: "application/pdf" });
       setCompressedSize(blob.size);
       setResultUrl(URL.createObjectURL(blob));
       setStatus("done");

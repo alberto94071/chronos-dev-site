@@ -23,7 +23,7 @@ export default function UnlockPage() {
       var doc = await PDFDocument.load(buf, { password: password });
       // Save without password
       var bytes = await doc.save();
-      var blob = new Blob([bytes], { type: "application/pdf" });
+      var blob = new Blob([bytes as BlobPart], { type: "application/pdf" });
       setResultUrl(URL.createObjectURL(blob));
       setStatus("done");
     } catch (e: any) {

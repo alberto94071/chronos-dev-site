@@ -62,7 +62,7 @@ export default function MergePage() {
       }
 
       var bytes = await merged.save();
-      var blob = new Blob([bytes], { type: "application/pdf" });
+      var blob = new Blob([bytes as BlobPart], { type: "application/pdf" });
       var url = URL.createObjectURL(blob);
       setResultUrl(url);
       setStatus("done");
