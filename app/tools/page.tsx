@@ -94,25 +94,8 @@ export default function ToolsPage() {
                 Herramienta 02
               </span>
             </div>
-            <h2 style={{ fontSize: "clamp(24px,4vw,36px)", fontWeight: 700, color: "var(--color-text)", marginBottom: 10 }}>
-              Asistente IA de Chronos-Dev
-            </h2>
-            <p style={{ fontSize: 14, color: "var(--color-muted)", maxWidth: 560, lineHeight: 1.7 }}>
-              Habla con nuestro asistente para saber qué solución digital necesita tu negocio.
-              Te explica opciones, precios y te conecta con nuestro equipo cuando estés listo.
-            </p>
-            <div style={{ display: "flex", gap: 12, marginTop: 16, flexWrap: "wrap" }}>
-              {["Claude AI", "Respuesta inmediata", "24/7", "Conecta a WhatsApp"].map(function (tag) {
-                return (
-                  <span key={tag} style={{ background: "var(--color-surface)", color: "var(--color-primary)", border: "1px solid var(--color-border)", fontSize: 10, padding: "4px 10px", fontFamily: "JetBrains Mono, monospace" }}>
-                    {tag}
-                  </span>
-                );
-              })}
             </div>
           </div>
-          <ChatWidget />
-        </div>
 
       </div>
 
