@@ -3,19 +3,19 @@ import { MetadataRoute } from "next";
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
-      url: "https://chronos-dev-gt.com",
+      url: "https://chronos-dev.com",
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 1,
     },
     {
-      url: "https://chronos-dev-gt.com/contact",
+      url: "https://chronos-dev.com/contact",
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.8,
     },
     {
-      url: "https://chronos-dev-gt.com/tools",
+      url: "https://chronos-dev.com/tools",
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.8,

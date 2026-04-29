@@ -6,6 +6,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: "*",
       allow: "/",
     },
-    sitemap: "https://chronos-dev-gt.com/sitemap.xml",
+    sitemap: "https://chronos-dev.com/sitemap.xml",
   };
 }
