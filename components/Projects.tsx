@@ -36,7 +36,7 @@ var projects: Project[] = [
     desc: "Catálogo de textiles tradicionales guatemaltecos con diseño inspirado en la cultura local y colores Mayas.",
     bg: "#061008", accentColor: "#4aaa5a",
     tech: ["Next.js 15", "Neon DB", "PWA", "WhatsApp"],
-    url: "https://textiles-tuanis.vercel.app",
+    url: "https://textilestuanis.vercel.app",
     icon: (
       <svg width="64" height="64" viewBox="0 0 70 70" fill="none">
         <rect x="12" y="12" width="46" height="46" rx="3" fill="#1a4a2415" stroke="#4aaa5a" strokeWidth="1.2" />
