@@ -60,8 +60,8 @@ export default function Home() {
         </div>
 
         {/* ICON */}
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--color-deep)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" fill="var(--color-deep)" stroke="var(--color-deep)" />
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" fill="rgba(122,255,0,0.1)" stroke="var(--color-primary)" />
           <circle cx="8" cy="10" r="1.2" fill="var(--color-primary)" />
           <circle cx="12" cy="10" r="1.2" fill="var(--color-primary)" />
           <circle cx="16" cy="10" r="1.2" fill="var(--color-primary)" />
@@ -73,45 +73,51 @@ export default function Home() {
           position: fixed;
           bottom: 28px;
           right: 28px;
-          width: 58px;
-          height: 58px;
+          width: 60px;
+          height: 60px;
           border-radius: 50%;
-          background: var(--color-primary);
+          background: rgba(122, 255, 0, 0.15);
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+          border: 1px solid rgba(122, 255, 0, 0.5);
           display: flex;
           align-items: center;
           justify-content: center;
-          box-shadow: 0 4px 24px #7aff0044;
+          box-shadow: 0 4px 30px rgba(122, 255, 0, 0.3);
           cursor: pointer;
           z-index: 999;
           text-decoration: none;
-          transition: transform 0.2s, box-shadow 0.2s;
+          transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s;
           animation: chatPulse 3s infinite;
         }
         .chat-float:hover {
-          transform: scale(1.1);
-          box-shadow: 0 6px 32px #7aff0066;
+          transform: scale(1.1) translateY(-4px);
+          box-shadow: 0 8px 40px rgba(122, 255, 0, 0.5);
+          border: 1px solid rgba(122, 255, 0, 0.8);
         }
         @keyframes chatPulse {
-          0%, 100% { box-shadow: 0 4px 24px #7aff0044; }
-          50% { box-shadow: 0 4px 32px #7aff0088, 0 0 0 10px #7aff0015; }
+          0%, 100% { box-shadow: 0 4px 30px rgba(122, 255, 0, 0.3); }
+          50% { box-shadow: 0 4px 40px rgba(122, 255, 0, 0.6), 0 0 0 10px rgba(122, 255, 0, 0.1); }
         }
 
         .chat-tooltip {
           position: absolute;
-          right: 68px;
-          bottom: 4px;
-          background: var(--color-surface);
-          border: 1px solid var(--color-border);
+          right: 76px;
+          bottom: 8px;
+          background: rgba(19, 26, 19, 0.85);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          border: 1px solid rgba(122, 255, 0, 0.3);
           color: var(--color-text);
-          padding: 10px 32px 10px 14px;
+          padding: 12px 36px 12px 16px;
           white-space: nowrap;
-          border-radius: 8px;
-          transition: opacity 0.3s;
+          border-radius: 12px;
+          transition: opacity 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
           pointer-events: auto;
           display: flex;
           flex-direction: column;
-          gap: 2px;
-          box-shadow: 0 4px 20px #00000044;
+          gap: 4px;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         }
         .chat-tooltip span {
           font-size: 11px;
@@ -129,9 +135,9 @@ export default function Home() {
           bottom: 18px;
           width: 12px;
           height: 12px;
-          background: var(--color-surface);
-          border-right: 1px solid var(--color-border);
-          border-bottom: 1px solid var(--color-border);
+          background: rgba(19, 26, 19, 0.85);
+          border-right: 1px solid rgba(122, 255, 0, 0.3);
+          border-bottom: 1px solid rgba(122, 255, 0, 0.3);
           transform: rotate(-45deg);
         }
 

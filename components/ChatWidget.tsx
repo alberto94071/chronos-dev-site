@@ -82,19 +82,22 @@ export default function ChatWidget() {
     <div style={{
       maxWidth: 680,
       margin: "0 auto",
-      background: "var(--color-deep)",
-      border: "1px solid var(--color-border)",
-      borderRadius: 8,
+      background: "rgba(19, 26, 19, 0.75)",
+      backdropFilter: "blur(16px)",
+      WebkitBackdropFilter: "blur(16px)",
+      border: "1px solid rgba(122, 255, 0, 0.15)",
+      borderRadius: 12,
       overflow: "hidden",
       display: "flex",
       flexDirection: "column",
       height: 520,
+      boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.3)",
     }}>
       {/* HEADER */}
       <div style={{
-        background: "var(--color-surface)",
-        borderBottom: "1px solid var(--color-border)",
-        padding: "14px 20px",
+        background: "rgba(0, 0, 0, 0.2)",
+        borderBottom: "1px solid rgba(122, 255, 0, 0.1)",
+        padding: "16px 20px",
         display: "flex",
         alignItems: "center",
         gap: 12,
@@ -129,7 +132,7 @@ export default function ChatWidget() {
         {messages.map(function (msg, i) {
           var isBot = msg.role === "assistant";
           return (
-            <div key={i} style={{
+            <div key={i} className="msg-enter" style={{
               display: "flex",
               gap: 10,
               flexDirection: isBot ? "row" : "row-reverse",
@@ -145,13 +148,17 @@ export default function ChatWidget() {
               )}
               <div style={{
                 maxWidth: "75%",
-                background: isBot ? "var(--color-surface)" : "var(--color-primary)",
-                color: isBot ? "var(--color-text)" : "var(--color-deep)",
-                padding: "10px 14px",
-                borderRadius: isBot ? "0 12px 12px 12px" : "12px 0 12px 12px",
+                background: isBot ? "rgba(255, 255, 255, 0.04)" : "rgba(122, 255, 0, 0.15)",
+                backdropFilter: "blur(10px)",
+                WebkitBackdropFilter: "blur(10px)",
+                border: isBot ? "1px solid rgba(255, 255, 255, 0.08)" : "1px solid rgba(122, 255, 0, 0.3)",
+                color: isBot ? "var(--color-text)" : "var(--color-primary)",
+                padding: "12px 16px",
+                borderRadius: isBot ? "0 16px 16px 16px" : "16px 0 16px 16px",
                 fontSize: 13,
                 lineHeight: 1.6,
                 whiteSpace: "pre-wrap",
+                boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
               }}>
                 {msg.content}
               </div>
@@ -225,11 +232,11 @@ export default function ChatWidget() {
 
       {/* INPUT */}
       <div style={{
-        borderTop: "1px solid var(--color-border)",
-        padding: "12px 16px",
+        borderTop: "1px solid rgba(122, 255, 0, 0.1)",
+        padding: "14px 16px",
         display: "flex",
         gap: 10,
-        background: "var(--color-surface)",
+        background: "rgba(0, 0, 0, 0.2)",
       }}>
         <input
           ref={inputRef}
@@ -240,32 +247,36 @@ export default function ChatWidget() {
           placeholder="Escribe tu mensaje..."
           style={{
             flex: 1,
-            background: "var(--color-deep)",
-            border: "1px solid var(--color-border)",
+            background: "rgba(0, 0, 0, 0.3)",
+            border: "1px solid rgba(255, 255, 255, 0.1)",
             color: "var(--color-text)",
             fontSize: 13,
-            padding: "10px 14px",
-            borderRadius: 6,
+            padding: "12px 16px",
+            borderRadius: 8,
             outline: "none",
+            transition: "border 0.2s",
           }}
+          onFocus={function (e) { e.target.style.border = "1px solid rgba(122, 255, 0, 0.5)"; }}
+          onBlur={function (e) { e.target.style.border = "1px solid rgba(255, 255, 255, 0.1)"; }}
           disabled={loading}
         />
         <button
           onClick={send}
           disabled={loading || !input.trim()}
           style={{
-            background: input.trim() && !loading ? "var(--color-primary)" : "var(--color-border)",
-            color: input.trim() && !loading ? "var(--color-deep)" : "var(--color-muted)",
+            background: input.trim() && !loading ? "var(--color-primary)" : "rgba(255,255,255,0.05)",
+            color: input.trim() && !loading ? "var(--color-deep)" : "rgba(255,255,255,0.3)",
             border: "none",
-            width: 42,
-            height: 42,
-            borderRadius: 6,
+            width: 44,
+            height: 44,
+            borderRadius: 8,
             cursor: input.trim() && !loading ? "pointer" : "not-allowed",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            transition: "all 0.2s",
+            transition: "all 0.3s",
             flexShrink: 0,
+            boxShadow: input.trim() && !loading ? "0 0 15px rgba(122, 255, 0, 0.4)" : "none",
           }}
         >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
@@ -275,6 +286,13 @@ export default function ChatWidget() {
       </div>
 
       <style>{`
+        @keyframes msgEnter {
+          from { opacity: 0; transform: translateY(10px) scale(0.98); }
+          to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .msg-enter {
+          animation: msgEnter 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
         @keyframes typingDot {
           0%, 100% { opacity: 0.3; transform: translateY(0); }
           50% { opacity: 1; transform: translateY(-3px); }
