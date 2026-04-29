@@ -49,8 +49,8 @@ export default function Navbar() {
         }}
       >
         {/* LOGO */}
-        <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none", flexShrink: 0 }}>
-          <svg width="32" height="32" viewBox="0 0 52 52" fill="none">
+        <Link href="/" aria-label="Inicio" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none", flexShrink: 0 }}>
+          <svg width="32" height="32" viewBox="0 0 52 52" fill="none" aria-hidden="true">
             <circle cx="26" cy="26" r="24" stroke="#7aff00" strokeWidth="1.5" opacity=".6" />
             <circle cx="26" cy="26" r="17" stroke="#7aff00" strokeWidth="1" opacity=".4" />
             <circle cx="26" cy="26" r="10" stroke="#39ff14" strokeWidth="1" opacity=".7" />

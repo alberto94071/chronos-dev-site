@@ -41,6 +41,7 @@ export default function Hero() {
       <svg
         style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", opacity: 0.07, pointerEvents: "none" }}
         xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
       >
         <defs>
           <pattern id="pcb" width="60" height="60" patternUnits="userSpaceOnUse">
@@ -57,7 +58,7 @@ export default function Hero() {
 
       {/* CONCENTRIC CIRCLES */}
       <div style={{ position: "absolute", top: "50%", left: "35%", transform: "translate(-50%,-50%)", opacity: 0.12, pointerEvents: "none" }}>
-        <svg width="600" height="600" viewBox="0 0 600 600" fill="none" stroke="#7aff00">
+        <svg width="600" height="600" viewBox="0 0 600 600" fill="none" stroke="#7aff00" aria-hidden="true">
           {[28,56,84,112,140,168,196,224,252,278].map(function (r) {
             return <circle key={r} cx="300" cy="300" r={r} />;
           })}
@@ -104,7 +105,7 @@ export default function Hero() {
         <div style={{ width: 160, height: 1, background: "var(--color-border)", margin: "14px 0 22px" }} />
 
         {/* HEADLINE */}
-        <div style={{ marginBottom: 36 }}>
+        <h1 style={{ margin: 0, padding: 0, marginBottom: 36 }}>
           <span
             className="aos d2 hero-h1"
             style={{ display: "block", fontSize: "clamp(42px,6.5vw,88px)", fontWeight: 700, color: "var(--color-text)", lineHeight: 1, letterSpacing: -2 }}
@@ -120,7 +121,7 @@ export default function Hero() {
               <span className="text-fill-inner">Automatización</span>
             </span>
           </span>
-        </div>
+        </h1>
 
         {/* SUBTITLE */}
         <p
