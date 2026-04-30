@@ -97,8 +97,8 @@ export default function About() {
               </p>
               <div className="cards-2col">
                 {[
-                  { label: "Email", value: "chronosdev@gmail.com", hi: true },
-                  { label: "WhatsApp", value: "(+502) 0000-0000", hi: false },
+                  { label: "Email", value: "contacto@chronos-dev.com", hi: true },
+                  { label: "WhatsApp", value: "(+502) 5502-6862", hi: false },
                   { label: "Ubicación", value: "Guatemala City, GT", hi: false },
                   { label: "Disponibilidad", value: "✦ Disponible ahora", hi: true },
                 ].map(function (c) {

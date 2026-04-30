@@ -3,7 +3,7 @@
 var socials = [
   { label: "Facebook", href: "https://facebook.com/chronos_dev_" },
   { label: "Instagram", href: "https://instagram.com/chronos_dev_" },
-  { label: "WhatsApp", href: "https://wa.me/50250000000" },
+  { label: "WhatsApp", href: "https://wa.me/50255026862" },
   { label: "LinkedIn", href: "#" },
 ];
 
@@ -41,10 +41,10 @@ export default function Footer() {
             </div>
           </div>
           <p style={{ fontSize: 13, color: "var(--color-muted)", lineHeight: 1.7, marginBottom: 12 }}>
-            Agencia de desarrollo web y automatización con IA basada en Guatemala City.
-            Soluciones digitales que generan resultados reales.
+            <strong style={{ color: "var(--color-text)", fontWeight: 500 }}>Agencia de desarrollo web</strong> y software en <strong>Guatemala</strong> y <strong>San Marcos</strong>.<br/>
+            Especialistas en crear la <strong style={{ color: "var(--color-text)", fontWeight: 500 }}>página web para tu negocio</strong>, sistemas a la medida y automatización con IA.
           </p>
-          <div style={{ fontSize: 14, color: "var(--color-primary)", marginBottom: 6 }}>chronosdev@gmail.com</div>
+          <div style={{ fontSize: 14, color: "var(--color-primary)", marginBottom: 6 }}>contacto@chronos-dev.com</div>
           <div style={{ fontSize: 13, color: "var(--color-muted)" }}>Guatemala City, Guatemala</div>
         </div>
 

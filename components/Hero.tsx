@@ -2,7 +2,7 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 
-const WHATSAPP = "https://wa.me/50250000000?text=Hola%20Chronos-Dev%2C%20me%20interesa%20un%20proyecto";
+const WHATSAPP = "https://wa.me/50255026862?text=Hola%20Chronos-Dev%2C%20me%20interesa%20un%20proyecto";
 
 export default function Hero() {
   const rootRef = useRef<HTMLElement>(null);
@@ -80,7 +80,7 @@ export default function Hero() {
         }}
       >
         <span className="vtext" style={{ color: "var(--color-muted)", fontSize: 9 }}>
-          (+502) 0000-0000
+          (+502) 5502-6862
         </span>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
           <span className="vtext">Scroll Down</span>
@@ -126,10 +126,11 @@ export default function Hero() {
         {/* SUBTITLE */}
         <p
           className="aos d4"
-          style={{ fontSize: 14, color: "var(--color-muted)", lineHeight: 1.7, maxWidth: 420, marginBottom: 32 }}
+          style={{ fontSize: 14, color: "var(--color-muted)", lineHeight: 1.7, maxWidth: 480, marginBottom: 32 }}
         >
-          Agencia de software e IA en Guatemala. Tiendas en línea, chatbots
-          inteligentes y automatización para negocios que quieren crecer en serio.
+          <strong style={{ color: "var(--color-text)", fontWeight: 500 }}>Empresa de desarrollo de software</strong> en Guatemala y San Marcos. 
+          Creamos la <strong style={{ color: "var(--color-text)", fontWeight: 500 }}>página web para tu negocio</strong>, 
+          tiendas en línea y automatización con IA para empresas que buscan resultados reales.
         </p>
 
         {/* CTA */}

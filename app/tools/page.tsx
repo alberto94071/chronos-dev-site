@@ -266,7 +266,7 @@ export default function ToolsPage() {
               </div>
             </div>
             <a
-              href="https://wa.me/50250000000?text=Hola%20Chronos-Dev%2C%20me%20gustar%C3%ADa%20sugerir%20una%20herramienta%20para%20la%20p%C3%A1gina"
+              href="https://wa.me/50255026862?text=Hola%20Chronos-Dev%2C%20me%20gustar%C3%ADa%20sugerir%20una%20herramienta%20para%20la%20p%C3%A1gina"
               target="_blank"
               rel="noopener noreferrer"
               style={{

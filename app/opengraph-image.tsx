@@ -33,7 +33,7 @@ export default async function Image() {
             display: "flex"
           }}
         />
-        
+
         {/* Contenido principal */}
         <div
           style={{
@@ -55,7 +55,7 @@ export default async function Image() {
           >
             Chronos-Dev
           </div>
-          
+
           <div
             style={{
               fontSize: 42,
@@ -67,7 +67,7 @@ export default async function Image() {
           >
             Software Development & AI Integration
           </div>
-          
+
           <div
             style={{
               display: "flex",

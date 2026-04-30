@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description: "Habla con nuestro asistente IA o escríbenos directamente. Te ayudamos a encontrar la solución digital perfecta para tu negocio.",
 };
 
-const WHATSAPP = "https://wa.me/50250000000?text=Hola%20Chronos-Dev%2C%20me%20interesa%20un%20proyecto";
+const WHATSAPP = "https://wa.me/50255026862?text=Hola%20Chronos-Dev%2C%20me%20interesa%20un%20proyecto";
 
 export default function ContactPage() {
   return (
@@ -75,7 +75,7 @@ export default function ContactPage() {
               WhatsApp directo
             </a>
             <a
-              href="mailto:chronosdev@gmail.com"
+              href="mailto:contacto@chronos-dev.com"
               style={{
                 display: "inline-flex",
                 alignItems: "center",
@@ -90,7 +90,7 @@ export default function ContactPage() {
                 borderRadius: 4,
               }}
             >
-              chronosdev@gmail.com
+              contacto@chronos-dev.com
             </a>
           </div>
         </div>
@@ -134,8 +134,8 @@ export default function ContactPage() {
 
             {[
               { icon: "📍", label: "Ubicación", value: "Guatemala City, Guatemala" },
-              { icon: "📧", label: "Email", value: "chronosdev@gmail.com" },
-              { icon: "💬", label: "WhatsApp", value: "(+502) 0000-0000" },
+              { icon: "📧", label: "Email", value: "contacto@chronos-dev.com" },
+              { icon: "💬", label: "WhatsApp", value: "(+502) 5502-6862" },
               { icon: "🕐", label: "Horario", value: "Lun–Vie 8am–6pm (GT)" },
             ].map((item) => (
               <div

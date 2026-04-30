@@ -1,7 +1,7 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 
-const WHATSAPP_BASE = "https://wa.me/50250000000?text=";
+const WHATSAPP_BASE = "https://wa.me/50255026862?text=";
 const WHATSAPP_DEFAULT = WHATSAPP_BASE + encodeURIComponent("Hola Chronos-Dev, vengo del chat de la página y me interesa un proyecto.");
 
 type Message = {

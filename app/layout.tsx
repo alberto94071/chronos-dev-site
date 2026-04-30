@@ -6,20 +6,24 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
-  title: "Chronos-Dev | Software Development & AI Integration",
+  title: "Chronos-Dev | Empresa de Desarrollo de Software y Web en Guatemala",
   description:
-    "Agencia de desarrollo web y automatización con IA en Guatemala. Tiendas en línea, chatbots, landing pages y más.",
+    "Agencia de desarrollo de software, páginas web y automatización con IA en Guatemala y San Marcos. Creamos la página web ideal para tu negocio.",
   keywords: [
+    "empresa de desarrollo de software guatemala",
     "desarrollo web guatemala",
+    "empresas de desarrollo en san marcos",
+    "pagina web para mi negocio",
+    "paginas de desarrollo web",
+    "agencia de software guatemala",
     "ecommerce guatemala",
-    "chatbot ia",
-    "automatizacion python",
-    "next.js guatemala",
+    "crear pagina web guatemala",
+    "chronos",
     "chronos dev",
   ],
   openGraph: {
-    title: "Chronos-Dev | Software & AI Integration",
-    description: "Soluciones digitales que no se quedan en el tiempo.",
+    title: "Chronos-Dev | Desarrollo de Software y Web en Guatemala",
+    description: "Creamos la página web ideal para tu negocio. Agencia en Guatemala y San Marcos.",
     url: "https://www.chronos-dev.com",
     siteName: "Chronos-Dev",
     locale: "es_GT",
