@@ -20,16 +20,15 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Chronos-Dev | Software & AI Integration",
     description: "Soluciones digitales que no se quedan en el tiempo.",
-    url: "https://chronos-dev.com",
+    url: "https://www.chronos-dev.com",
     siteName: "Chronos-Dev",
     locale: "es_GT",
     type: "website",
   },
-  metadataBase: new URL("https://chronos-dev.com"),
-  icons: {
-    icon: "/icon.png",
-    apple: "/apple-icon.png",
+  alternates: {
+    canonical: "./",
   },
+  metadataBase: new URL("https://www.chronos-dev.com"),
 };
 
 export default function RootLayout({

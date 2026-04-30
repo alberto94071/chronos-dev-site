@@ -11,6 +11,7 @@ type Project = {
   tech: string[];
   url: string;
   icon: React.ReactNode;
+  image?: string;
 };
 
 var projects: Project[] = [
@@ -22,6 +23,7 @@ var projects: Project[] = [
     bg: "#130a10", accentColor: "#e891c0",
     tech: ["Next.js 15", "Neon DB", "Cloudinary", "WhatsApp"],
     url: "https://vestidos-mysy.vercel.app",
+    image: "/projects/mysy.png",
     icon: (
       <svg width="64" height="64" viewBox="0 0 70 70" fill="none">
         <path d="M22 16L10 55l25-8 25 8L48 16Z" fill="#e891c015" stroke="#e891c0" strokeWidth="1.2" />
@@ -37,6 +39,7 @@ var projects: Project[] = [
     bg: "#061008", accentColor: "#4aaa5a",
     tech: ["Next.js 15", "Neon DB", "PWA", "WhatsApp"],
     url: "https://textiles-tuanis.vercel.app",
+    image: "/projects/tuanis.png",
     icon: (
       <svg width="64" height="64" viewBox="0 0 70 70" fill="none">
         <rect x="12" y="12" width="46" height="46" rx="3" fill="#1a4a2415" stroke="#4aaa5a" strokeWidth="1.2" />
@@ -55,6 +58,7 @@ var projects: Project[] = [
     bg: "#05020c", accentColor: "#aa77ee",
     tech: ["Next.js 15", "Dual Market", "Geolocation", "Neon DB"],
     url: "https://rfragancias.store",
+    image: "/projects/fragancias.png",
     icon: (
       <svg width="64" height="64" viewBox="0 0 70 70" fill="none">
         <rect x="28" y="28" width="14" height="28" rx="3" fill="#7030aa15" stroke="#aa77ee" strokeWidth="1.2" />
@@ -71,6 +75,7 @@ var projects: Project[] = [
     bg: "#030e0a", accentColor: "#00e676",
     tech: ["Cloudflare Pages", "JavaScript", "Mundial 2026", "Real-time"],
     url: "https://quiniela-mundial.pages.dev/tabla",
+    image: "/projects/quiniela.png",
     icon: (
       <svg width="64" height="64" viewBox="0 0 70 70" fill="none">
         <circle cx="35" cy="35" r="26" fill="#00e67615" stroke="#00e676" strokeWidth="1.2" />
@@ -88,6 +93,7 @@ var projects: Project[] = [
     bg: "#05060e", accentColor: "#3a7aaa",
     tech: ["Claude API", "Next.js", "WhatsApp", "24/7"],
     url: "/contact",
+    image: "/projects/chatbot.png",
     icon: (
       <svg width="64" height="64" viewBox="0 0 70 70" fill="none">
         <rect x="8" y="16" width="32" height="22" rx="4" fill="#1a3a5a15" stroke="#3a7aaa" strokeWidth="1.2" />
@@ -165,12 +171,18 @@ export default function Projects() {
               onMouseEnter={function (e) { e.currentTarget.style.background = "var(--color-surface)"; }}
               onMouseLeave={function (e) { e.currentTarget.style.background = "transparent"; }}
             >
-              <div style={{ height: 190, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", background: p.bg }}>
-                <span style={{ position: "absolute", top: 10, left: 10, fontSize: 9, color: "var(--color-primary)", letterSpacing: 1.5, textTransform: "uppercase", border: "1px solid #7aff0033", background: "#7aff0015", padding: "2px 7px" }}>
+              <div className="project-img-container" style={{ height: 190, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", background: p.bg, overflow: "hidden" }}>
+                <span style={{ position: "absolute", top: 10, left: 10, fontSize: 9, color: "var(--color-primary)", letterSpacing: 1.5, textTransform: "uppercase", border: "1px solid #7aff0033", background: "#7aff0015", padding: "2px 7px", zIndex: 2 }}>
                   {p.cat}
                 </span>
-                {p.icon}
-                <span style={{ position: "absolute", bottom: 8, right: 10, fontSize: 9, color: p.accentColor, fontFamily: "JetBrains Mono, monospace" }}>
+                
+                {p.image ? (
+                  <img src={p.image} alt={p.name} className="project-image" style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.65, transition: "opacity 0.3s, transform 0.5s ease" }} />
+                ) : (
+                  p.icon
+                )}
+
+                <span style={{ position: "absolute", bottom: 8, right: 10, fontSize: 9, color: p.accentColor, fontFamily: "JetBrains Mono, monospace", zIndex: 2 }}>
                   Click →
                 </span>
               </div>
@@ -212,6 +224,10 @@ export default function Projects() {
         @media (min-width: 481px) and (max-width: 768px) {
           .projects-grid-main { grid-template-columns: 1fr 1fr !important; }
           .projects-grid-main > div:nth-child(odd) { border-right: 1px solid var(--color-border) !important; }
+        }
+        .projects-grid-main > div:hover .project-image {
+          opacity: 1 !important;
+          transform: scale(1.05);
         }
       `}</style>
 
