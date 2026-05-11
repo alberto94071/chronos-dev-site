@@ -57,7 +57,7 @@ var projects: Project[] = [
     desc: "E-commerce de perfumería de lujo con precios duales GTQ/USD, geolocalización automática y mercado GT + EE.UU.",
     bg: "#05020c", accentColor: "#aa77ee",
     tech: ["Next.js 15", "Dual Market", "Geolocation", "Neon DB"],
-    url: "https://rfragancias.store",
+    url: "https://rfragancias.vercel.app/",
     image: "/projects/fragancias.png",
     icon: (
       <svg width="64" height="64" viewBox="0 0 70 70" fill="none">
