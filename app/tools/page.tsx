@@ -12,7 +12,6 @@ const comingSoon = [
   { icon: "🤖", name: "Generador de contratos", desc: "Crea contratos básicos para tu negocio en segundos con IA." },
   { icon: "📊", name: "Analizador de datos CSV", desc: "Sube tu hoja de cálculo y obtén insights automáticos." },
   { icon: "🖼️", name: "Optimizador de imágenes", desc: "Comprime y convierte imágenes para web sin perder calidad." },
-  { icon: "✍️", name: "Generador de descripciones", desc: "Crea descripciones de productos para tu tienda en línea." },
   { icon: "📧", name: "Redactor de emails", desc: "Genera correos profesionales para clientes y proveedores." },
   { icon: "🔍", name: "Auditor SEO básico", desc: "Analiza tu página y obtén recomendaciones de mejora." },
 ];
@@ -175,6 +174,69 @@ export default function ToolsPage() {
         {/* DIVIDER */}
         <div style={{ height: 1, background: "var(--color-border)", marginBottom: 80 }} />
 
+        {/* GENERADOR DE DESCRIPCIONES — HERRAMIENTA 03 */}
+        <div style={{ marginBottom: 80 }}>
+          <div style={{ marginBottom: 36 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+              <div style={{ height: 1, width: 32, background: "var(--color-primary)" }} />
+              <span style={{ fontFamily: "Georgia, serif", fontStyle: "italic", color: "var(--color-primary)", fontSize: 14 }}>
+                Copywriting con IA
+              </span>
+            </div>
+            <h2 style={{ fontSize: "clamp(22px,4vw,34px)", fontWeight: 700, color: "var(--color-text)", marginBottom: 10 }}>
+              Generador de descripciones de productos
+            </h2>
+            <p style={{ fontSize: 14, color: "var(--color-muted)", maxWidth: 560, lineHeight: 1.7 }}>
+              Ingresa el nombre y características de tu producto y recibe 3 variaciones de descripción
+              optimizadas — corta, media y completa — listas para usar en tu tienda, redes sociales o catálogo.
+            </p>
+            <div style={{ display: "flex", gap: 10, marginTop: 14, flexWrap: "wrap" }}>
+              {["Español + English", "5 tonos", "6 plataformas", "Sin registro"].map((tag) => (
+                <span
+                  key={tag}
+                  style={{
+                    background: "var(--color-surface)",
+                    color: "var(--color-primary)",
+                    border: "1px solid var(--color-border)",
+                    fontSize: 10,
+                    padding: "4px 10px",
+                    fontFamily: "JetBrains Mono, monospace",
+                  }}
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <a
+            href="/tools/descriptions"
+            className="tool-entry-link"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 12,
+              background: "var(--color-surface)",
+              border: "1px solid var(--color-border)",
+              borderRadius: 6,
+              padding: "20px 24px",
+              textDecoration: "none",
+              transition: "border-color 0.2s",
+            }}
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" />
+            </svg>
+            <div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: "var(--color-text)" }}>Abrir generador de descripciones</div>
+              <div style={{ fontSize: 10, color: "var(--color-primary)", fontFamily: "JetBrains Mono, monospace", marginTop: 2 }}>Usar →</div>
+            </div>
+          </a>
+        </div>
+
+        {/* DIVIDER */}
+        <div style={{ height: 1, background: "var(--color-border)", marginBottom: 80 }} />
+
         {/* COMING SOON */}
         <div>
           <div style={{ textAlign: "center", marginBottom: 48 }}>
@@ -286,6 +348,7 @@ export default function ToolsPage() {
       </div>
 
       <style>{`
+        .tool-entry-link:hover { border-color: var(--color-primary) !important; }
         @media (max-width: 768px) {
           .tools-grid { grid-template-columns: 1fr 1fr !important; }
         }
