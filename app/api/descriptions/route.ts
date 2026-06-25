@@ -48,12 +48,12 @@ Recuerda: usa EXACTAMENTE las etiquetas [SHORT]...[/SHORT], [MEDIUM]...[/MEDIUM]
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: "openai/gpt-oss-20b",
+        model: "llama-3.3-70b-versatile",
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
           { role: "user", content: userPrompt },
         ],
-        max_tokens: 700,
+        max_tokens: 1000,
         temperature: 0.75,
       }),
     });
