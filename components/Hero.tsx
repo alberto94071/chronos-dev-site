@@ -221,7 +221,7 @@ export default function Hero() {
           }}
         >
           {[
-            { value: "+5", label: "Proyectos" },
+            { value: "+50", label: "Proyectos" },
             { value: "3",  label: "Países" },
             { value: "100%", label: "Satisfacción" },
           ].map(function (stat, i) {

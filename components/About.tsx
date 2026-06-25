@@ -138,13 +138,23 @@ export default function About() {
         )}
 
         {active === "Servicios" && (
+          <div>
+            <div style={{ marginBottom: 24, padding: "16px 20px", borderLeft: "2px solid var(--color-primary)", background: "var(--color-deep)", fontSize: 13, color: "var(--color-muted)", lineHeight: 1.7 }}>
+              <strong style={{ color: "var(--color-text)", display: "block", marginBottom: 4, fontSize: 14 }}>Más de 50 proyectos entregados en todas las plataformas.</strong>
+              Web · Mobile · Desktop · IA · Extensiones de navegador · Software a medida.
+            </div>
           <div className="grid-services">
             {[
-              { n:"01", cat:"E-commerce",    name:"Tienda en línea completa",           desc:"Catálogo, carrito, checkout WhatsApp o tarjeta, panel admin." },
-              { n:"02", cat:"Web Design",    name:"Landing page profesional",           desc:"Rápida, responsive, optimizada para conversión." },
-              { n:"03", cat:"IA",            name:"Chatbot con inteligencia artificial", desc:"Asistente virtual 24/7 para tu web o WhatsApp. Claude API." },
-              { n:"04", cat:"Automatización", name:"Flujos Python + IA",               desc:"Scripts que eliminan trabajo manual y generan reportes." },
-              { n:"05", cat:"Soporte",       name:"Mantenimiento mensual",              desc:"Actualizaciones, soporte técnico y optimización continua." },
+              { n:"01", cat:"E-commerce",         name:"Tienda en línea",              desc:"Catálogo, carrito, checkout WhatsApp o tarjeta, panel admin." },
+              { n:"02", cat:"Web Design",          name:"Landing page profesional",     desc:"Rápida, responsive, optimizada para conversión." },
+              { n:"03", cat:"Android & iOS",       name:"App móvil para tu negocio",    desc:"React Native nativo. Tu marca en el bolsillo de tus clientes." },
+              { n:"04", cat:"Software Escritorio", name:"App Windows · Mac · Linux",   desc:"POS, facturación, gestión interna, sistemas que funcionan offline." },
+              { n:"05", cat:"Gestión",             name:"Gestor de inventario",         desc:"Stock, entradas/salidas, alertas, reportes PDF en tiempo real." },
+              { n:"06", cat:"IA",                  name:"Chatbot inteligente",          desc:"Asistente virtual 24/7 entrenado con tu info de negocio." },
+              { n:"07", cat:"Browser Dev",         name:"Extensión de navegador",       desc:"Chrome, Firefox, Edge — automatiza cualquier flujo web." },
+              { n:"08", cat:"Automatización",      name:"Python + IA a medida",         desc:"Scripts que eliminan trabajo manual y generan reportes." },
+              { n:"09", cat:"Soporte",             name:"Asistencia remota",            desc:"Mantenimiento, actualizaciones y soporte técnico continuo." },
+              { n:"10", cat:"Software a medida",   name:"¿Lo imaginas? Lo hacemos.",    desc:"Sin límite de plataforma — cuéntanos tu idea." },
             ].map(function (s) {
               return (
                 <div
@@ -160,6 +170,7 @@ export default function About() {
                 </div>
               );
             })}
+          </div>
           </div>
         )}
 

@@ -4,11 +4,16 @@ import { useEffect, useRef } from "react";
 const WHATSAPP = "https://wa.me/50255026862?text=Hola%20Chronos-Dev%2C%20me%20interesa%20un%20proyecto";
 
 var services = [
-  { n:"01", cat:"E-commerce",      name:"Tienda en línea completa",       desc:"Catálogo, carrito, checkout por WhatsApp o tarjeta. Panel admin incluido." },
-  { n:"02", cat:"Web Design",      name:"Landing page de alto impacto",   desc:"Páginas rápidas, responsivas y optimizadas para convertir visitas en clientes." },
-  { n:"03", cat:"Inteligencia Artificial", name:"Chatbot con IA para tu negocio", desc:"Asistente virtual entrenado con la info de tu negocio. 24/7 en web o WhatsApp." },
-  { n:"04", cat:"Automatización",  name:"Flujos Python + IA a medida",    desc:"Scripts que procesan datos, generan reportes y eliminan trabajo manual." },
-  { n:"05", cat:"Soporte mensual", name:"Mantenimiento y actualizaciones", desc:"Soporte continuo, actualizaciones y optimización para mantener tu sitio activo." },
+  { n:"01", cat:"E-commerce",            name:"Tienda en línea completa",           desc:"Catálogo, carrito, checkout por WhatsApp o tarjeta. Panel admin incluido." },
+  { n:"02", cat:"Web Design",            name:"Landing page de alto impacto",       desc:"Páginas rápidas, responsivas y optimizadas para convertir visitas en clientes." },
+  { n:"03", cat:"Mobile · Android & iOS",name:"App para tu negocio",                desc:"Aplicación nativa o híbrida con React Native. Tu marca en el bolsillo de cada cliente, con notificaciones y pagos integrados." },
+  { n:"04", cat:"Software Empresarial",  name:"Aplicación de escritorio",           desc:"Sistemas para Windows, Mac y Linux. POS, facturación, ERP, gestión interna — todo funciona offline si lo necesitas." },
+  { n:"05", cat:"Gestión · Backend",     name:"Gestor de inventario a medida",      desc:"Control de entradas y salidas, alertas de stock bajo, reportes PDF, código QR y dashboard en tiempo real." },
+  { n:"06", cat:"Inteligencia Artificial",name:"Chatbot con IA para tu negocio",    desc:"Asistente virtual entrenado con la información de tu empresa. Disponible 24/7 en web o WhatsApp." },
+  { n:"07", cat:"Browser Dev",           name:"Extensión de navegador",             desc:"Chrome, Firefox y Edge. Automatiza flujos web, extrae datos o agrega superpoderes a cualquier sitio que uses." },
+  { n:"08", cat:"Automatización",        name:"Flujos Python + IA a medida",        desc:"Scripts que procesan datos, generan reportes automáticos y eliminan por completo el trabajo manual repetitivo." },
+  { n:"09", cat:"Soporte · Remoto",      name:"Asistencia remota y mantenimiento",  desc:"Resolución inmediata de problemas, actualizaciones, migraciones y soporte técnico continuo para tu equipo o infraestructura." },
+  { n:"10", cat:"Software a medida",     name:"¿Tienes algo en mente?",             desc:"Si existe en una pantalla, lo construimos. Cuéntanos tu idea y la convertimos en software real." },
 ];
 
 var process = [
@@ -41,10 +46,47 @@ export default function Services() {
             <span style={{ fontFamily: "Georgia, serif", fontStyle: "italic", color: "var(--color-primary)", fontSize: 14 }}>Services That I Provide</span>
             <div style={{ height: 1, width: 40, background: "var(--color-primary)" }} />
           </div>
-          <h2 className="aos d1" style={{ fontSize: "clamp(22px,4vw,32px)", fontWeight: 700, color: "var(--color-text)", lineHeight: 1.2, maxWidth: 600, margin: "0 auto" }}>
-            Soluciones especializadas para el crecimiento de tu negocio
+          <h2 className="aos d1" style={{ fontSize: "clamp(22px,4vw,32px)", fontWeight: 700, color: "var(--color-text)", lineHeight: 1.2, maxWidth: 640, margin: "0 auto" }}>
+            Si corre en una pantalla,{" "}
+            <span style={{ background: "linear-gradient(90deg, var(--color-primary), #39ff14)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+              lo construimos.
+            </span>
           </h2>
         </div>
+
+        {/* PLATFORM SCOPE TAGS */}
+        <div className="aos d2" style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center", marginBottom: 40 }}>
+          {[
+            "Web App", "Android · iOS", "Windows · Mac · Linux",
+            "Chrome · Firefox", "IA & Chatbots", "Gestores de Inventario",
+            "Soporte Remoto", "Software a Medida",
+          ].map(function(tag) {
+            return (
+              <span key={tag} style={{
+                border: "1px solid rgba(122,255,0,0.18)",
+                background: "rgba(122,255,0,0.04)",
+                color: "var(--color-muted)",
+                fontSize: 10, padding: "5px 12px",
+                fontFamily: "JetBrains Mono, monospace",
+                letterSpacing: 0.5,
+              }}>
+                {tag}
+              </span>
+            );
+          })}
+        </div>
+
+        {/* SCOPE STATEMENT */}
+        <div className="aos d3" style={{ marginBottom: 40, padding: "20px 24px", borderLeft: "2px solid var(--color-primary)", background: "var(--color-deep)", maxWidth: 680 }}>
+          <div style={{ fontSize: 15, fontWeight: 700, color: "var(--color-text)", marginBottom: 6, lineHeight: 1.4 }}>
+            No solo páginas web — construimos el ecosistema digital completo de tu empresa.
+          </div>
+          <div style={{ fontSize: 13, color: "var(--color-muted)", lineHeight: 1.7 }}>
+            Más de <strong style={{ color: "var(--color-primary)" }}>50 proyectos entregados</strong> en web, mobile, escritorio y automatización.
+            Sin importar la plataforma: si lo imaginas, lo desarrollamos.
+          </div>
+        </div>
+
         <div style={{ borderTop: "1px solid var(--color-border)" }}>
           {services.map(function (s, i) {
             return (
