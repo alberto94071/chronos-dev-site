@@ -57,7 +57,6 @@ Recuerda: responde SOLO con el JSON, sin texto adicional ni markdown.`;
         ],
         max_tokens: 700,
         temperature: 0.75,
-        response_format: { type: "json_object" },
       }),
     });
 
@@ -68,12 +67,23 @@ Recuerda: responde SOLO con el JSON, sin texto adicional ni markdown.`;
     }
 
     const data = await response.json();
-    const raw = data.choices?.[0]?.message?.content || "{}";
+    let raw = data.choices?.[0]?.message?.content || "";
+
+    // Strip markdown code fences if the model wraps the JSON
+    raw = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "").trim();
+
+    // Extract JSON object even if there's surrounding text
+    const jsonMatch = raw.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      console.error("No JSON found in response:", raw);
+      return NextResponse.json({ error: "Error al procesar respuesta" }, { status: 500 });
+    }
 
     let parsed: { short?: string; medium?: string; long?: string };
     try {
-      parsed = JSON.parse(raw);
+      parsed = JSON.parse(jsonMatch[0]);
     } catch {
+      console.error("JSON parse error:", jsonMatch[0]);
       return NextResponse.json({ error: "Error al procesar respuesta" }, { status: 500 });
     }
 
