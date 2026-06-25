@@ -10,12 +10,10 @@ REGLAS:
 - No inventes características que no se mencionaron
 - Cada variación debe ser distinta en estructura, no solo en longitud
 
-FORMATO DE RESPUESTA (JSON estricto, sin markdown):
-{
-  "short": "Descripción corta de 1 oración (20-30 palabras). Ideal para badges o etiquetas.",
-  "medium": "Descripción media de 2-3 oraciones (50-80 palabras). Ideal para tarjetas de producto.",
-  "long": "Descripción larga de 4-6 oraciones (120-160 palabras). Ideal para página de detalle del producto."
-}`;
+FORMATO DE RESPUESTA OBLIGATORIO (usa exactamente estas etiquetas, sin texto adicional antes ni después):
+[SHORT]Descripción corta de 1 oración, 20-30 palabras, ideal para badges.[/SHORT]
+[MEDIUM]Descripción media de 2-3 oraciones, 50-80 palabras, ideal para tarjetas de producto.[/MEDIUM]
+[LONG]Descripción larga de 4-6 oraciones, 120-160 palabras, ideal para página de detalle.[/LONG]`;
 
 export async function POST(req: NextRequest) {
   try {
@@ -41,7 +39,7 @@ Tono: ${tone || "Profesional"}
 Plataforma destino: ${platform || "Tienda en línea"}
 Idioma de respuesta: ${lang}
 
-Recuerda: responde SOLO con el JSON, sin texto adicional ni markdown.`;
+Recuerda: usa EXACTAMENTE las etiquetas [SHORT]...[/SHORT], [MEDIUM]...[/MEDIUM] y [LONG]...[/LONG]. Sin texto adicional antes ni después.`;
 
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
@@ -67,31 +65,23 @@ Recuerda: responde SOLO con el JSON, sin texto adicional ni markdown.`;
     }
 
     const data = await response.json();
-    let raw = data.choices?.[0]?.message?.content || "";
+    const raw: string = data.choices?.[0]?.message?.content || "";
 
-    // Strip markdown code fences if the model wraps the JSON
-    raw = raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "").trim();
+    const extract = (tag: string) => {
+      const m = raw.match(new RegExp(`\\[${tag}\\]([\\s\\S]*?)\\[\\/${tag}\\]`, "i"));
+      return m ? m[1].trim() : "";
+    };
 
-    // Extract JSON object even if there's surrounding text
-    const jsonMatch = raw.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
-      console.error("No JSON found in response:", raw);
-      return NextResponse.json({ error: "Error al procesar respuesta" }, { status: 500 });
-    }
+    const short = extract("SHORT");
+    const medium = extract("MEDIUM");
+    const long = extract("LONG");
 
-    let parsed: { short?: string; medium?: string; long?: string };
-    try {
-      parsed = JSON.parse(jsonMatch[0]);
-    } catch {
-      console.error("JSON parse error:", jsonMatch[0]);
-      return NextResponse.json({ error: "Error al procesar respuesta" }, { status: 500 });
-    }
-
-    if (!parsed.short || !parsed.medium || !parsed.long) {
+    if (!short || !medium || !long) {
+      console.error("Missing tags in model response:", raw);
       return NextResponse.json({ error: "Respuesta incompleta del modelo" }, { status: 500 });
     }
 
-    return NextResponse.json(parsed);
+    return NextResponse.json({ short, medium, long });
   } catch (error) {
     console.error("Descriptions error:", error);
     return NextResponse.json({ error: "Error interno del servidor" }, { status: 500 });
