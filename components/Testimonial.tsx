@@ -22,6 +22,13 @@ export default function Testimonial() {
     return function () { observer.disconnect(); };
   }, []);
 
+  useEffect(function () {
+    var t = setInterval(function () {
+      setActive(function (a) { return (a + 1) % testimonials.length; });
+    }, 5000);
+    return function () { clearInterval(t); };
+  }, []);
+
   var t = testimonials[active];
 
   return (
@@ -51,27 +58,44 @@ export default function Testimonial() {
           })}
         </div>
 
-        {/* TESTIMONIAL */}
-        <div className="aos d2" style={{ maxWidth: 560 }}>
-          <div style={{ display: "flex", gap: 5, marginBottom: 20 }}>
-            {[1,2,3,4,5].map(function (s) {
-              return (
-                <svg key={s} width="18" height="18" viewBox="0 0 16 16" fill="var(--color-primary)">
-                  <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
-                </svg>
-              );
-            })}
+        {/* TESTIMONIAL — key triggers fade on change */}
+        <div className="aos d2" style={{ maxWidth: 560, position: "relative" }}>
+
+          {/* Large quote SVG */}
+          <svg width="44" height="34" viewBox="0 0 44 34" fill="rgba(122,255,0,0.08)" style={{ marginBottom: 16, display: "block" }} aria-hidden="true">
+            <path d="M0 34V20.4C0 9.1 7.8 1.36 23.4 0L25.5 3.63C18.75 5.22 14.8 9.07 14.25 15.35H25.5V34H0ZM25.5 34V20.4C25.5 9.1 33.3 1.36 48.9 0L51 3.63C44.25 5.22 40.3 9.07 39.75 15.35H51V34H25.5Z" transform="scale(0.86)"/>
+          </svg>
+
+          <div key={active} style={{ animation: "tabFade 0.4s ease" }}>
+            <div style={{ display: "flex", gap: 5, marginBottom: 20 }}>
+              {[1,2,3,4,5].map(function (s) {
+                return (
+                  <svg key={s} width="18" height="18" viewBox="0 0 16 16" fill="var(--color-primary)">
+                    <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+                  </svg>
+                );
+              })}
+            </div>
+            <p style={{ fontSize: 15, color: "var(--color-muted)", lineHeight: 1.8, fontStyle: "italic", marginBottom: 20 }}>
+              &ldquo;{t.quote}&rdquo;
+            </p>
+            <div style={{ fontSize: 16, fontWeight: 700, color: "var(--color-primary)" }}>{t.name}</div>
+            <div style={{ fontSize: 12, color: "var(--color-muted)", marginTop: 2 }}>{t.role}</div>
           </div>
-          <p style={{ fontSize: 15, color: "var(--color-muted)", lineHeight: 1.8, fontStyle: "italic", marginBottom: 20 }}>
-            &ldquo;{t.quote}&rdquo;
-          </p>
-          <div style={{ fontSize: 16, fontWeight: 700, color: "var(--color-primary)" }}>{t.name}</div>
-          <div style={{ fontSize: 12, color: "var(--color-muted)", marginTop: 2 }}>{t.role}</div>
-          <div style={{ display: "flex", gap: 8, marginTop: 20 }}>
+
+          {/* DOTS with progress */}
+          <div style={{ display: "flex", gap: 8, marginTop: 24, alignItems: "center" }}>
             {testimonials.map(function (_, i) {
               return (
                 <button key={i} onClick={function () { setActive(i); }}
-                  style={{ width: 10, height: 10, borderRadius: "50%", background: i === active ? "var(--color-primary)" : "var(--color-border)", border: "none", cursor: "pointer", transition: "background 0.2s" }}
+                  style={{
+                    width: i === active ? 24 : 10,
+                    height: 10,
+                    borderRadius: i === active ? 5 : "50%",
+                    background: i === active ? "var(--color-primary)" : "var(--color-border)",
+                    border: "none", cursor: "pointer",
+                    transition: "all 0.3s cubic-bezier(0.4,0,0.2,1)",
+                  }}
                 />
               );
             })}
@@ -88,14 +112,23 @@ export default function Testimonial() {
         </div>
       </div>
 
-      {/* CLIENTS */}
+      {/* CLIENTS — with hover glow */}
       <div style={{ marginTop: 64, textAlign: "center" }}>
         <div style={{ fontSize: 13, color: "var(--color-muted)", letterSpacing: 0.5, marginBottom: 28 }}>
           Negocios que confían en Chronos-Dev
         </div>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 36, flexWrap: "wrap" }}>
           {["MYSY Fashion", "Textiles Tuanis", "R Fragancias", "Instituto Lab"].map(function (c) {
-            return <span key={c} style={{ fontSize: 15, fontWeight: 700, color: "var(--color-border)", letterSpacing: 0.5 }}>{c}</span>;
+            return (
+              <span
+                key={c}
+                style={{ fontSize: 15, fontWeight: 700, color: "var(--color-border)", letterSpacing: 0.5, cursor: "default", transition: "color 0.3s, text-shadow 0.3s" }}
+                onMouseEnter={function(e) { e.currentTarget.style.color = "var(--color-muted)"; e.currentTarget.style.textShadow = "0 0 18px rgba(122,255,0,0.25)"; }}
+                onMouseLeave={function(e) { e.currentTarget.style.color = "var(--color-border)"; e.currentTarget.style.textShadow = "none"; }}
+              >
+                {c}
+              </span>
+            );
           })}
         </div>
       </div>

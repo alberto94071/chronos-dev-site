@@ -56,14 +56,35 @@ export default function Hero() {
         <rect width="100%" height="100%" fill="url(#pcb)" />
       </svg>
 
-      {/* CONCENTRIC CIRCLES */}
+      {/* CONCENTRIC CIRCLES — now rotating */}
       <div style={{ position: "absolute", top: "50%", left: "35%", transform: "translate(-50%,-50%)", opacity: 0.12, pointerEvents: "none" }}>
-        <svg width="600" height="600" viewBox="0 0 600 600" fill="none" stroke="#7aff00" aria-hidden="true">
+        <svg
+          width="600" height="600" viewBox="0 0 600 600"
+          fill="none" stroke="#7aff00"
+          aria-hidden="true"
+          className="circles-svg"
+          style={{ animation: "slowRotate 80s linear infinite" }}
+        >
           {[28,56,84,112,140,168,196,224,252,278].map(function (r) {
             return <circle key={r} cx="300" cy="300" r={r} />;
           })}
         </svg>
       </div>
+
+      {/* PULSING ORB — hidden mobile */}
+      <div
+        className="hero-bars hero-orb"
+        style={{
+          position: "absolute",
+          right: 60, top: "50%",
+          width: 500, height: 500,
+          borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(122,255,0,0.07) 0%, rgba(122,255,0,0.02) 50%, transparent 70%)",
+          animation: "orbPulse 5s ease-in-out infinite",
+          pointerEvents: "none",
+          zIndex: 1,
+        }}
+      />
 
       {/* LEFT BAR — hidden mobile */}
       <div
@@ -84,7 +105,13 @@ export default function Hero() {
         </span>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
           <span className="vtext">Scroll Down</span>
-          <div style={{ width: 1, height: 52, background: "var(--color-border)", position: "relative" }}>
+          <div style={{ width: 1, height: 52, background: "var(--color-border)", position: "relative", overflow: "hidden" }}>
+            <div style={{
+              position: "absolute", top: 0, left: 0, right: 0,
+              height: "35%",
+              background: "linear-gradient(to bottom, transparent, var(--color-primary), transparent)",
+              animation: "scrollLine 2s ease-in-out infinite",
+            }} />
             <div style={{ position: "absolute", bottom: -5, left: -3, width: 7, height: 7, borderRight: "1px solid var(--color-border)", borderBottom: "1px solid var(--color-border)", transform: "rotate(45deg)" }} />
           </div>
         </div>
@@ -128,8 +155,8 @@ export default function Hero() {
           className="aos d4"
           style={{ fontSize: 14, color: "var(--color-muted)", lineHeight: 1.7, maxWidth: 480, marginBottom: 32 }}
         >
-          <strong style={{ color: "var(--color-text)", fontWeight: 500 }}>Empresa de desarrollo de software</strong> en Guatemala y San Marcos. 
-          Creamos la <strong style={{ color: "var(--color-text)", fontWeight: 500 }}>página web para tu negocio</strong>, 
+          <strong style={{ color: "var(--color-text)", fontWeight: 500 }}>Empresa de desarrollo de software</strong> en Guatemala y San Marcos.
+          Creamos la <strong style={{ color: "var(--color-text)", fontWeight: 500 }}>página web para tu negocio</strong>,
           tiendas en línea y automatización con IA para empresas que buscan resultados reales.
         </p>
 
@@ -150,7 +177,10 @@ export default function Hero() {
               display: "inline-flex",
               alignItems: "center",
               gap: 6,
+              transition: "transform 0.2s, box-shadow 0.2s",
             }}
+            onMouseEnter={function(e) { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 8px 24px rgba(122,255,0,0.35)"; }}
+            onMouseLeave={function(e) { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "none"; }}
           >
             Hablemos →
           </a>
@@ -169,10 +199,48 @@ export default function Hero() {
               fontSize: 12,
               letterSpacing: 1,
               textDecoration: "none",
+              transition: "background 0.2s, color 0.2s",
             }}
+            onMouseEnter={function(e) { e.currentTarget.style.background = "rgba(122,255,0,0.06)"; }}
+            onMouseLeave={function(e) { e.currentTarget.style.background = "transparent"; }}
           >
             Ver proyectos
           </a>
+        </div>
+
+        {/* STATS */}
+        <div
+          className="aos"
+          style={{
+            display: "flex", gap: 0,
+            marginTop: 32,
+            borderTop: "1px solid var(--color-border)",
+            paddingTop: 20,
+            maxWidth: 400,
+            transitionDelay: "0.65s",
+          }}
+        >
+          {[
+            { value: "+5", label: "Proyectos" },
+            { value: "3",  label: "Países" },
+            { value: "100%", label: "Satisfacción" },
+          ].map(function (stat, i) {
+            return (
+              <div key={stat.label} style={{
+                flex: 1,
+                paddingLeft: i > 0 ? 20 : 0,
+                paddingRight: i < 2 ? 20 : 0,
+                borderRight: i < 2 ? "1px solid var(--color-border)" : "none",
+              }}>
+                <div style={{ fontSize: "clamp(18px,2.2vw,28px)", fontWeight: 800, color: "var(--color-primary)", lineHeight: 1 }}>
+                  {stat.value}
+                </div>
+                <div style={{ fontSize: 9, color: "var(--color-muted)", fontFamily: "JetBrains Mono, monospace", letterSpacing: 1, marginTop: 4, textTransform: "uppercase" }}>
+                  {stat.label}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
@@ -242,7 +310,10 @@ export default function Hero() {
                 border: "1px solid var(--color-border)",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 textDecoration: "none",
+                transition: "border-color 0.2s, background 0.2s",
               }}
+              onMouseEnter={function(e) { e.currentTarget.style.borderColor = "var(--color-primary)"; e.currentTarget.style.background = "rgba(122,255,0,0.06)"; }}
+              onMouseLeave={function(e) { e.currentTarget.style.borderColor = "var(--color-border)"; e.currentTarget.style.background = "var(--color-surface)"; }}
             >
               <svg width="12" height="12" viewBox="0 0 24 24" fill="var(--color-muted)">
                 <path d={soc.path} />

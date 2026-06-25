@@ -229,3 +229,70 @@ body {
   .grid-soc      { grid-template-columns: 1fr !important; }
   .hero-h1       { font-size: 28px !important; }
 }
+
+/* ─────────────────────────────────────────
+   PREMIUM ANIMATION SYSTEM
+───────────────────────────────────────── */
+@keyframes slowRotate {
+  to { transform: rotate(360deg); }
+}
+@keyframes orbPulse {
+  0%,100% { opacity: 0.55; transform: translateY(-50%) scale(1); }
+  50%     { opacity: 0.9;  transform: translateY(-50%) scale(1.12); }
+}
+@keyframes tabFade {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes scrollLine {
+  0%   { transform: translateY(-100%); opacity: 0; }
+  15%  { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { transform: translateY(350%); opacity: 0; }
+}
+@keyframes glowSweep {
+  from { background-position: -100% 0; }
+  to   { background-position: 200% 0; }
+}
+@keyframes termBlink {
+  0%,100% { opacity: 1; }
+  50%     { opacity: 0; }
+}
+@keyframes procScan {
+  from { left: -30%; }
+  to   { left: 130%; }
+}
+@keyframes modalBackdropIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes modalCardIn {
+  from { opacity: 0; transform: scale(0.94) translateY(16px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* NAV LINK PREMIUM HOVER */
+.nav-link {
+  font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--color-muted); text-decoration: none;
+  position: relative; transition: color 0.2s; cursor: pointer;
+}
+.nav-link::after {
+  content: "";
+  position: absolute; bottom: -4px; left: 0;
+  width: 0; height: 1px;
+  background: var(--color-primary);
+  transition: width 0.25s ease;
+}
+.nav-link:hover { color: var(--color-primary); }
+.nav-link:hover::after { width: 100%; }
+.nav-link-accent { color: var(--color-primary) !important; font-weight: 700; }
+.nav-link-accent:hover { color: var(--color-primary) !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .circles-svg,
+  .hero-orb       { animation: none !important; }
+  .proc-scan      { animation: none !important; }
+  .footer-glow-bar { animation: none !important; }
+  .skill-bar-fill { transition-duration: 0s !important; }
+}

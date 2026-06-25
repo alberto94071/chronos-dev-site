@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import CustomCursor from "@/components/CustomCursor";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -52,7 +53,7 @@ export default function RootLayout({
         <meta name="color-scheme" content="dark" />
         <meta name="theme-color" content="#131a13" />
       </head>
-      <body className={inter.variable}>{children}</body>
+      <body className={inter.variable}>{children}<CustomCursor /></body>
       <GoogleAnalytics gaId="G-X008RML142" />
     </html>
   );

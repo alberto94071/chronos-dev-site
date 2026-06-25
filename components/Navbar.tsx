@@ -11,7 +11,7 @@ export default function Navbar() {
   const pathname = usePathname();
 
   useEffect(() => {
-    function onScroll() { setScrolled(window.scrollY > 10); }
+    function onScroll() { setScrolled(window.scrollY > 20); }
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -32,20 +32,20 @@ export default function Navbar() {
     <>
       <nav
         style={{
-          background: "var(--color-deep)",
+          background: scrolled ? "rgba(10,16,14,0.88)" : "var(--color-deep)",
+          backdropFilter: scrolled ? "blur(20px)" : "none",
+          WebkitBackdropFilter: scrolled ? "blur(20px)" : "none",
           borderBottom: "1px solid var(--color-border)",
           position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
+          top: 0, left: 0, right: 0,
           zIndex: 100,
           height: 60,
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
           padding: "0 20px",
-          boxShadow: scrolled ? "0 2px 20px #00000044" : "none",
-          transition: "box-shadow 0.2s",
+          boxShadow: scrolled ? "0 2px 24px #00000055" : "none",
+          transition: "background 0.35s, box-shadow 0.35s, backdrop-filter 0.35s",
         }}
       >
         {/* LOGO */}
@@ -69,29 +69,25 @@ export default function Navbar() {
         </Link>
 
         {/* DESKTOP LINKS */}
-        <div className="nav-desktop" style={{ display: "flex", gap: 24, alignItems: "center" }}>
-          <a href="#about" onClick={(e) => { e.preventDefault(); scrollTo("about"); }}
-            style={{ fontSize: 11, letterSpacing: "1.5px", textTransform: "uppercase", color: "var(--color-muted)", textDecoration: "none" }}>
-            Nosotros
-          </a>
-          <a href="#projects" onClick={(e) => { e.preventDefault(); scrollTo("projects"); }}
-            style={{ fontSize: 11, letterSpacing: "1.5px", textTransform: "uppercase", color: "var(--color-muted)", textDecoration: "none" }}>
-            Proyectos
-          </a>
-          <a href="#services" onClick={(e) => { e.preventDefault(); scrollTo("services"); }}
-            style={{ fontSize: 11, letterSpacing: "1.5px", textTransform: "uppercase", color: "var(--color-muted)", textDecoration: "none" }}>
-            Servicios
-          </a>
-          <Link href="/tools"
-            style={{ fontSize: 11, letterSpacing: "1.5px", textTransform: "uppercase", color: "var(--color-muted)", textDecoration: "none" }}>
-            Herramientas
-          </Link>
-          <Link href="/contact"
-            style={{ fontSize: 11, letterSpacing: "1.5px", textTransform: "uppercase", color: "var(--color-primary)", textDecoration: "none", fontWeight: 700 }}>
-            Contacto
-          </Link>
-          <a href={WHATSAPP} target="_blank" rel="noopener noreferrer"
-            style={{ background: "var(--color-primary)", color: "var(--color-deep)", padding: "10px 20px", fontSize: 11, fontWeight: 700, letterSpacing: 1, textDecoration: "none", whiteSpace: "nowrap" }}>
+        <div className="nav-desktop" style={{ display: "flex", gap: 28, alignItems: "center" }}>
+          <a href="#about"    onClick={(e) => { e.preventDefault(); scrollTo("about"); }}    className="nav-link">Nosotros</a>
+          <a href="#projects" onClick={(e) => { e.preventDefault(); scrollTo("projects"); }} className="nav-link">Proyectos</a>
+          <a href="#services" onClick={(e) => { e.preventDefault(); scrollTo("services"); }} className="nav-link">Servicios</a>
+          <Link href="/tools"    className="nav-link">Herramientas</Link>
+          <Link href="/contact"  className="nav-link nav-link-accent">Contacto</Link>
+          <a
+            href={WHATSAPP}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              background: "var(--color-primary)", color: "var(--color-deep)",
+              padding: "10px 20px", fontSize: 11, fontWeight: 700, letterSpacing: 1,
+              textDecoration: "none", whiteSpace: "nowrap",
+              transition: "transform 0.18s, box-shadow 0.18s",
+            }}
+            onMouseEnter={function(e) { e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.boxShadow = "0 6px 20px rgba(122,255,0,0.3)"; }}
+            onMouseLeave={function(e) { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "none"; }}
+          >
             Let&apos;s Talk →
           </a>
         </div>
@@ -124,18 +120,19 @@ export default function Navbar() {
           className="nav-burger-btn"
           style={{
             position: "fixed", top: 60, left: 0, right: 0, bottom: 0,
-            background: "var(--color-deep)",
+            background: "rgba(10,16,14,0.97)",
+            backdropFilter: "blur(20px)",
+            WebkitBackdropFilter: "blur(20px)",
             borderTop: "1px solid var(--color-border)",
             zIndex: 99, display: "flex", flexDirection: "column", overflowY: "auto",
           }}
         >
           <div style={{ flex: 1, padding: "8px 0" }}>
-            {/* SCROLL LINKS */}
             {[
-              { hash: "about", label: "Nosotros" },
+              { hash: "about",    label: "Nosotros" },
               { hash: "projects", label: "Proyectos" },
               { hash: "services", label: "Servicios" },
-              { hash: "process", label: "Proceso" },
+              { hash: "process",  label: "Proceso" },
             ].map((item) => (
               <a key={item.hash} href={"#" + item.hash}
                 onClick={(e) => { e.preventDefault(); scrollTo(item.hash); }}
@@ -143,7 +140,10 @@ export default function Navbar() {
                   display: "flex", alignItems: "center", justifyContent: "space-between",
                   padding: "18px 24px", fontSize: 15, color: "var(--color-text)",
                   textDecoration: "none", borderBottom: "1px solid var(--color-border)",
+                  transition: "color 0.2s, padding-left 0.2s",
                 }}
+                onMouseEnter={function(e) { e.currentTarget.style.color = "var(--color-primary)"; e.currentTarget.style.paddingLeft = "32px"; }}
+                onMouseLeave={function(e) { e.currentTarget.style.color = "var(--color-text)"; e.currentTarget.style.paddingLeft = "24px"; }}
               >
                 {item.label}
                 <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" style={{ opacity: 0.3 }}>
@@ -152,7 +152,6 @@ export default function Navbar() {
               </a>
             ))}
 
-            {/* PAGE LINKS — these use Link for real navigation */}
             <Link href="/tools" onClick={() => setOpen(false)}
               style={{
                 display: "flex", alignItems: "center", justifyContent: "space-between",
@@ -160,7 +159,16 @@ export default function Navbar() {
                 textDecoration: "none", borderBottom: "1px solid var(--color-border)",
               }}
             >
-              Herramientas ✦
+              <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                Herramientas
+                <span style={{
+                  fontSize: 8, color: "var(--color-primary)",
+                  background: "rgba(122,255,0,0.1)",
+                  border: "1px solid rgba(122,255,0,0.2)",
+                  padding: "1px 5px", letterSpacing: 1,
+                  fontFamily: "JetBrains Mono, monospace",
+                }}>NEW</span>
+              </span>
               <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" style={{ opacity: 0.3 }}>
                 <path fillRule="evenodd" d="M4.646 1.646a.5.5 0 01.708 0l6 6a.5.5 0 010 .708l-6 6a.5.5 0 01-.708-.708L10.293 8 4.646 2.354a.5.5 0 010-.708z" />
               </svg>

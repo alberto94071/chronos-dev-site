@@ -9,7 +9,18 @@ var socials = [
 
 export default function Footer() {
   return (
-    <footer className="sec-pad" style={{ paddingBottom: 0 }}>
+    <footer className="sec-pad" style={{ paddingBottom: 0, position: "relative" }}>
+      {/* Animated glow sweep on top border */}
+      <div
+        className="footer-glow-bar"
+        style={{
+          position: "absolute", top: 0, left: 0, right: 0,
+          height: 1,
+          background: "linear-gradient(90deg, transparent 0%, var(--color-primary) 50%, transparent 100%)",
+          backgroundSize: "200% 100%",
+          animation: "glowSweep 4s linear infinite",
+        }}
+      />
       {/* PREMIUM CTA */}
       <div style={{ marginBottom: 48, paddingBottom: 48, borderBottom: "1px solid var(--color-border)" }}>
         <div style={{ fontSize: 10, fontFamily: "JetBrains Mono, monospace", color: "var(--color-primary)", letterSpacing: 3, textTransform: "uppercase", marginBottom: 16 }}>
@@ -95,7 +106,7 @@ export default function Footer() {
       {/* BOTTOM BAR */}
       <div style={{ borderTop: "1px solid var(--color-border)", padding: "14px 0", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 8 }}>
         <span style={{ fontSize: 11, color: "var(--color-border)" }}>
-          © 2025 <span style={{ color: "var(--color-primary)" }}>Chronos-Dev.</span> Todos los derechos reservados.
+          © {new Date().getFullYear()} <span style={{ color: "var(--color-primary)" }}>Chronos-Dev.</span> Todos los derechos reservados.
         </span>
         <div style={{ display: "flex", gap: 16 }}>
           {["Términos", "Privacidad"].map(function (link) {

@@ -149,7 +149,7 @@ export default function Projects() {
         </h2>
       </div>
 
-      {/* GRID — todos los proyectos */}
+      {/* GRID */}
       <div style={{
         display: "grid",
         gridTemplateColumns: "repeat(3, 1fr)",
@@ -166,16 +166,22 @@ export default function Projects() {
                 cursor: "pointer",
                 borderRight: i % 3 !== 2 ? "1px solid var(--color-border)" : undefined,
                 borderBottom: i < projects.length - (projects.length % 3 || 3) ? "1px solid var(--color-border)" : undefined,
-                transition: "background 0.2s",
+                transition: "background 0.25s, box-shadow 0.25s",
               }}
-              onMouseEnter={function (e) { e.currentTarget.style.background = "var(--color-surface)"; }}
-              onMouseLeave={function (e) { e.currentTarget.style.background = "transparent"; }}
+              onMouseEnter={function (e) {
+                e.currentTarget.style.background = "var(--color-surface)";
+                e.currentTarget.style.boxShadow = "inset 0 2px 0 0 " + p.accentColor;
+              }}
+              onMouseLeave={function (e) {
+                e.currentTarget.style.background = "transparent";
+                e.currentTarget.style.boxShadow = "none";
+              }}
             >
               <div className="project-img-container" style={{ height: 190, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", background: p.bg, overflow: "hidden" }}>
                 <span style={{ position: "absolute", top: 10, left: 10, fontSize: 9, color: "var(--color-primary)", letterSpacing: 1.5, textTransform: "uppercase", border: "1px solid #7aff0033", background: "#7aff0015", padding: "2px 7px", zIndex: 2 }}>
                   {p.cat}
                 </span>
-                
+
                 {p.image ? (
                   <img src={p.image} alt={p.name} className="project-image" style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.65, transition: "opacity 0.3s, transform 0.5s ease" }} />
                 ) : (
@@ -205,9 +211,9 @@ export default function Projects() {
       {/* MORE WORK */}
       <div className="aos d4" style={{ textAlign: "center", marginTop: 40 }}>
         <button
-          style={{ width: 108, height: 108, borderRadius: "50%", background: "var(--color-primary)", border: "none", cursor: "pointer", display: "inline-flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4, transition: "transform 0.2s" }}
-          onMouseEnter={function (e) { e.currentTarget.style.transform = "scale(1.05)"; }}
-          onMouseLeave={function (e) { e.currentTarget.style.transform = "scale(1)"; }}
+          style={{ width: 108, height: 108, borderRadius: "50%", background: "var(--color-primary)", border: "none", cursor: "pointer", display: "inline-flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4, transition: "transform 0.2s, box-shadow 0.2s" }}
+          onMouseEnter={function (e) { e.currentTarget.style.transform = "scale(1.08)"; e.currentTarget.style.boxShadow = "0 0 32px rgba(122,255,0,0.35)"; }}
+          onMouseLeave={function (e) { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = "none"; }}
         >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="var(--color-deep)">
             <path fillRule="evenodd" d="M1 8a.5.5 0 01.5-.5h11.793l-3.147-3.146a.5.5 0 01.708-.708l4 4a.5.5 0 010 .708l-4 4a.5.5 0 01-.708-.708L13.293 8.5H1.5A.5.5 0 011 8z" />
@@ -234,10 +240,10 @@ export default function Projects() {
       {/* DEMO OVERLAY */}
       {demo && (
         <div
-          style={{ position: "fixed", inset: 0, background: "#000000cc", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 200, padding: 16 }}
+          style={{ position: "fixed", inset: 0, background: "#000000cc", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 200, padding: 16, animation: "modalBackdropIn 0.2s ease" }}
           onClick={function (e) { if (e.target === e.currentTarget) setDemo(null); }}
         >
-          <div style={{ background: "var(--color-deep)", border: "1px solid var(--color-border)", borderRadius: 6, width: "100%", maxWidth: 680, overflow: "hidden" }}>
+          <div style={{ background: "var(--color-deep)", border: "1px solid var(--color-border)", borderRadius: 8, width: "100%", maxWidth: 680, overflow: "hidden", animation: "modalCardIn 0.3s cubic-bezier(0.2,0.8,0.2,1)" }}>
             {/* BROWSER BAR */}
             <div style={{ background: "var(--color-surface)", padding: "9px 14px", display: "flex", alignItems: "center", borderBottom: "1px solid var(--color-border)" }}>
               <button onClick={function () { setDemo(null); }} style={{ width: 12, height: 12, borderRadius: "50%", background: "#ff5f57", border: "none", cursor: "pointer", fontSize: 8, color: "#500" }}>✕</button>
@@ -248,6 +254,22 @@ export default function Projects() {
               </div>
               <span style={{ fontSize: 8, color: "var(--color-primary)", background: "#7aff0015", border: "1px solid #7aff0033", padding: "2px 7px", letterSpacing: 1, textTransform: "uppercase" }}>demo</span>
             </div>
+
+            {/* PROJECT IMAGE IN MODAL */}
+            {(function () {
+              var p = projects.find(function (x) { return x.id === demo; });
+              if (!p || !p.image) return null;
+              return (
+                <div style={{ height: 180, background: p.bg, position: "relative", overflow: "hidden" }}>
+                  <img src={p.image} alt={p.name} style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.6 }} />
+                  <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent 30%, " + p.bg + " 100%)" }} />
+                  <div style={{ position: "absolute", bottom: 12, left: 16, fontSize: 9, color: p.accentColor, fontFamily: "JetBrains Mono, monospace", letterSpacing: 2, textTransform: "uppercase", border: "1px solid " + p.accentColor + "44", padding: "2px 8px" }}>
+                    {p.cat}
+                  </div>
+                </div>
+              );
+            })()}
+
             {/* CONTENT */}
             <div style={{ padding: 24 }}>
               {(function () {
@@ -262,9 +284,26 @@ export default function Projects() {
                     </div>
                     <h3 style={{ fontSize: 22, fontWeight: 700, color: "var(--color-text)", marginBottom: 10 }}>{p.name}</h3>
                     <p style={{ fontSize: 14, color: "var(--color-muted)", lineHeight: 1.7, marginBottom: 20 }}>{p.desc}</p>
-                    <a href={p.url} target={p.url.startsWith("http") ? "_blank" : "_self"} rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "var(--color-primary)", color: "var(--color-deep)", padding: "10px 22px", fontSize: 12, fontWeight: 700, textDecoration: "none" }}>
-                      {p.url.startsWith("http") ? "Ver en vivo →" : "Ir a contacto →"}
-                    </a>
+                    <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
+                      <a
+                        href={p.url}
+                        target={p.url.startsWith("http") ? "_blank" : "_self"}
+                        rel="noopener noreferrer"
+                        style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "var(--color-primary)", color: "var(--color-deep)", padding: "10px 22px", fontSize: 12, fontWeight: 700, textDecoration: "none", transition: "transform 0.2s" }}
+                        onMouseEnter={function(e) { e.currentTarget.style.transform = "translateY(-2px)"; }}
+                        onMouseLeave={function(e) { e.currentTarget.style.transform = "none"; }}
+                      >
+                        {p.url.startsWith("http") ? "Ver en vivo →" : "Ir a contacto →"}
+                      </a>
+                      <button
+                        onClick={function() { setDemo(null); }}
+                        style={{ fontSize: 12, color: "var(--color-muted)", background: "none", border: "1px solid var(--color-border)", padding: "10px 16px", cursor: "pointer", transition: "color 0.2s" }}
+                        onMouseEnter={function(e) { e.currentTarget.style.color = "var(--color-text)"; }}
+                        onMouseLeave={function(e) { e.currentTarget.style.color = "var(--color-muted)"; }}
+                      >
+                        Cerrar
+                      </button>
+                    </div>
                   </div>
                 );
               })()}
