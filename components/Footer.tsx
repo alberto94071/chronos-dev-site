@@ -10,12 +10,37 @@ var socials = [
 export default function Footer() {
   return (
     <footer className="sec-pad" style={{ paddingBottom: 0 }}>
-      {/* BIG TEXT */}
-      <div
-        className="footer-big"
-        style={{ fontSize: "clamp(32px,8vw,64px)", fontWeight: 700, color: "var(--color-border)", letterSpacing: -2, lineHeight: 1, marginBottom: 32 }}
-      >
-        Get In Touch
+      {/* PREMIUM CTA */}
+      <div style={{ marginBottom: 48, paddingBottom: 48, borderBottom: "1px solid var(--color-border)" }}>
+        <div style={{ fontSize: 10, fontFamily: "JetBrains Mono, monospace", color: "var(--color-primary)", letterSpacing: 3, textTransform: "uppercase", marginBottom: 16 }}>
+          ¿Listo para empezar?
+        </div>
+        <div style={{
+          fontSize: "clamp(28px,5vw,52px)", fontWeight: 800, lineHeight: 1.08,
+          letterSpacing: "-0.02em", marginBottom: 24,
+          background: "linear-gradient(90deg, var(--color-text) 0%, var(--color-primary) 60%, #39ff14 100%)",
+          WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
+          display: "inline-block",
+        }}>
+          Construyamos algo<br />extraordinario juntos.
+        </div>
+        <div>
+          <a
+            href="https://wa.me/50255026862?text=Hola%20Chronos-Dev%2C%20me%20interesa%20un%20proyecto"
+            target="_blank" rel="noopener noreferrer"
+            style={{
+              display: "inline-flex", alignItems: "center", gap: 8,
+              background: "var(--color-primary)", color: "var(--color-deep)",
+              padding: "14px 32px", fontSize: 13, fontWeight: 800,
+              textDecoration: "none", letterSpacing: 0.5,
+              transition: "transform 0.2s, box-shadow 0.2s",
+            }}
+            onMouseEnter={function(e) { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 8px 28px rgba(122,255,0,0.4)"; }}
+            onMouseLeave={function(e) { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "none"; }}
+          >
+            Hablemos por WhatsApp →
+          </a>
+        </div>
       </div>
 
       {/* FOOTER GRID */}
